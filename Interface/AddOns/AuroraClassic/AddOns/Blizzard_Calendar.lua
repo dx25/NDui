@@ -105,7 +105,7 @@ C.themes["Blizzard_Calendar"] = function()
 
 	CalendarTodayFrame:SetBackdrop({
 		edgeFile = C.media.backdrop,
-		edgeSize = 1.2,
+		edgeSize = C.mult,
 	})
 	CalendarTodayFrame:SetBackdropBorderColor(r, g, b)
 
@@ -205,6 +205,7 @@ C.themes["Blizzard_Calendar"] = function()
 	F.ReskinScroll(CalendarViewEventDescriptionScrollFrameScrollBar)
 	F.ReskinScroll(CalendarCreateEventInviteListScrollFrameScrollBar)
 	F.ReskinScroll(CalendarCreateEventDescriptionScrollFrameScrollBar)
+	F.ReskinDropDown(CalendarCreateEventCommunityDropDown)
 	F.ReskinDropDown(CalendarCreateEventTypeDropDown)
 	F.ReskinDropDown(CalendarCreateEventHourDropDown)
 	F.ReskinDropDown(CalendarCreateEventMinuteDropDown)

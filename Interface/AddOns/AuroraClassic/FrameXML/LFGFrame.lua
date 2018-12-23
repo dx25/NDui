@@ -90,13 +90,11 @@ tinsert(C.themes["AuroraClassic"], function()
 	hooksecurefunc("LFGDungeonReadyDialogReward_SetMisc", function(button)
 		if not button.styled then
 			local border = _G[button:GetName().."Border"]
-
 			button.texture:SetTexCoord(.08, .92, .08, .92)
-
 			border:SetColorTexture(0, 0, 0)
 			border:SetDrawLayer("BACKGROUND")
-			border:SetPoint("TOPLEFT", button.texture, -1, 1)
-			border:SetPoint("BOTTOMRIGHT", button.texture, 1, -1)
+			border:SetPoint("TOPLEFT", button.texture, -C.mult, C.mult)
+			border:SetPoint("BOTTOMRIGHT", button.texture, C.mult, -C.mult)
 
 			button.styled = true
 		end
@@ -156,7 +154,7 @@ tinsert(C.themes["AuroraClassic"], function()
 		for i = 1, 2 do
 			local left = roleButton:CreateTexture()
 			left:SetDrawLayer("OVERLAY", i)
-			left:SetWidth(1.2)
+			left:SetWidth(C.mult)
 			left:SetTexture(C.media.backdrop)
 			left:SetVertexColor(0, 0, 0)
 			left:SetPoint("TOPLEFT", roleButton, 6, -5)
@@ -165,7 +163,7 @@ tinsert(C.themes["AuroraClassic"], function()
 
 			local right = roleButton:CreateTexture()
 			right:SetDrawLayer("OVERLAY", i)
-			right:SetWidth(1.2)
+			right:SetWidth(C.mult)
 			right:SetTexture(C.media.backdrop)
 			right:SetVertexColor(0, 0, 0)
 			right:SetPoint("TOPRIGHT", roleButton, -6, -5)
@@ -174,7 +172,7 @@ tinsert(C.themes["AuroraClassic"], function()
 
 			local top = roleButton:CreateTexture()
 			top:SetDrawLayer("OVERLAY", i)
-			top:SetHeight(1.2)
+			top:SetHeight(C.mult)
 			top:SetTexture(C.media.backdrop)
 			top:SetVertexColor(0, 0, 0)
 			top:SetPoint("TOPLEFT", roleButton, 6, -5)
@@ -183,7 +181,7 @@ tinsert(C.themes["AuroraClassic"], function()
 
 			local bottom = roleButton:CreateTexture()
 			bottom:SetDrawLayer("OVERLAY", i)
-			bottom:SetHeight(1.2)
+			bottom:SetHeight(C.mult)
 			bottom:SetTexture(C.media.backdrop)
 			bottom:SetVertexColor(0, 0, 0)
 			bottom:SetPoint("BOTTOMLEFT", roleButton, 6, 7)
@@ -199,13 +197,11 @@ tinsert(C.themes["AuroraClassic"], function()
 		local shortageBorder = roleButton.shortageBorder
 		if shortageBorder then
 			local icon = roleButton.incentiveIcon
-
 			shortageBorder:SetTexture("")
-
 			icon.border:SetColorTexture(0, 0, 0)
 			icon.border:SetDrawLayer("BACKGROUND")
-			icon.border:SetPoint("TOPLEFT", icon.texture, -1, 1)
-			icon.border:SetPoint("BOTTOMRIGHT", icon.texture, 1, -1)
+			icon.border:SetPoint("TOPLEFT", icon.texture, -C.mult, C.mult)
+			icon.border:SetPoint("BOTTOMRIGHT", icon.texture, C.mult, -C.mult)
 
 			icon:SetPoint("BOTTOMRIGHT", 3, -3)
 			icon:SetSize(14, 14)

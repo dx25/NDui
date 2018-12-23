@@ -56,16 +56,15 @@ tinsert(C.themes["AuroraClassic"], function()
 		local slot = _G["Character"..slots[i].."Slot"]
 		local border = slot.IconBorder
 
-		_G["Character"..slots[i].."SlotFrame"]:Hide()
-
+		F.StripTextures(slot)
 		slot:SetNormalTexture("")
 		slot:SetPushedTexture("")
 		slot:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 		slot.SetHighlightTexture = F.dummy
 		slot.icon:SetTexCoord(.08, .92, .08, .92)
 
-		border:SetPoint("TOPLEFT", -1.2, 1.2)
-		border:SetPoint("BOTTOMRIGHT", 1.2, -1.2)
+		border:SetPoint("TOPLEFT", -C.mult, C.mult)
+		border:SetPoint("BOTTOMRIGHT", C.mult, -C.mult)
 		border:SetDrawLayer("BACKGROUND")
 		F.CreateBDFrame(slot, .25)
 
@@ -91,9 +90,6 @@ tinsert(C.themes["AuroraClassic"], function()
 		hooksecurefunc(slot, "DisplayAsAzeriteItem", UpdateAzeriteItem)
 		hooksecurefunc(slot, "DisplayAsAzeriteEmpoweredItem", UpdateAzeriteEmpoweredItem)
 	end
-
-	select(13, CharacterMainHandSlot:GetRegions()):Hide()
-	select(13, CharacterSecondaryHandSlot:GetRegions()):Hide()
 
 	hooksecurefunc("PaperDollItemSlotButton_Update", function(button)
 		-- also fires for bag slots, we don't want that
@@ -149,8 +145,8 @@ tinsert(C.themes["AuroraClassic"], function()
 		tab.bg:SetFrameLevel(0)
 		F.CreateBD(tab.bg)
 
-		tab.Hider:SetPoint("TOPLEFT", tab.bg, 1.2, -1.2)
-		tab.Hider:SetPoint("BOTTOMRIGHT", tab.bg, -1.2, 1.2)
+		tab.Hider:SetPoint("TOPLEFT", tab.bg, C.mult, -C.mult)
+		tab.Hider:SetPoint("BOTTOMRIGHT", tab.bg, -C.mult, C.mult)
 	end
 
 	-- [[ Equipment manager ]]
@@ -183,8 +179,8 @@ tinsert(C.themes["AuroraClassic"], function()
 
 		bu:SetCheckedTexture(C.media.checked)
 		select(2, bu:GetRegions()):Hide()
-		ic:SetPoint("TOPLEFT", 1, -1)
-		ic:SetPoint("BOTTOMRIGHT", -1, 1)
+		ic:SetPoint("TOPLEFT", C.mult, -C.mult)
+		ic:SetPoint("BOTTOMRIGHT", -C.mult, C.mult)
 		ic:SetTexCoord(.08, .92, .08, .92)
 
 		F.CreateBD(bu, .25)

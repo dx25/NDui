@@ -7,7 +7,6 @@ tinsert(C.themes["AuroraClassic"], function()
 
 	-- [[ Bank ]]
 
-	select(16, BankFrame:GetRegions()):Hide()
 	BankSlotsFrame:DisableDrawLayer("BORDER")
 	BankPortraitTexture:Hide()
 	BankFrameMoneyFrameInset:Hide()
@@ -17,7 +16,7 @@ tinsert(C.themes["AuroraClassic"], function()
 	select(9, BankSlotsFrame:GetRegions()):SetDrawLayer("OVERLAY")
 	select(10, BankSlotsFrame:GetRegions()):SetDrawLayer("OVERLAY")
 
-	F.ReskinPortraitFrame(BankFrame)
+	F.ReskinPortraitFrame(BankFrame, true)
 	F.Reskin(BankFramePurchaseButton)
 	F.ReskinTab(BankFrameTab1)
 	F.ReskinTab(BankFrameTab2)
@@ -41,12 +40,12 @@ tinsert(C.themes["AuroraClassic"], function()
 
 		border:SetTexture(C.media.backdrop)
 		border.SetTexture = F.dummy
-		border:SetPoint("TOPLEFT", -1.2, 1.2)
-		border:SetPoint("BOTTOMRIGHT", 1.2, -1.2)
+		border:SetPoint("TOPLEFT", -C.mult, C.mult)
+		border:SetPoint("BOTTOMRIGHT", C.mult, -C.mult)
 		border:SetDrawLayer("BACKGROUND", 1)
 
-		searchOverlay:SetPoint("TOPLEFT", -1.2, 1.2)
-		searchOverlay:SetPoint("BOTTOMRIGHT", 1.2, -1.2)
+		searchOverlay:SetPoint("TOPLEFT", -C.mult, C.mult)
+		searchOverlay:SetPoint("BOTTOMRIGHT", C.mult, -C.mult)
 
 		bu:SetNormalTexture("")
 		bu:SetPushedTexture("")
@@ -74,16 +73,16 @@ tinsert(C.themes["AuroraClassic"], function()
 		bag:SetPushedTexture("")
 		bag:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
 
-		highlightFrame:GetRegions():SetTexture(C.media.checked)
+		--highlightFrame:GetRegions():SetTexture(C.media.checked)
 
 		border:SetTexture(C.media.backdrop)
 		border.SetTexture = F.dummy
-		border:SetPoint("TOPLEFT", -1.2, 1.2)
-		border:SetPoint("BOTTOMRIGHT", 1.2, -1.2)
+		border:SetPoint("TOPLEFT", -C.mult, C.mult)
+		border:SetPoint("BOTTOMRIGHT", C.mult, -C.mult)
 		border:SetDrawLayer("BACKGROUND", 1)
 
-		searchOverlay:SetPoint("TOPLEFT", -1.2, 1.2)
-		searchOverlay:SetPoint("BOTTOMRIGHT", 1.2, -1.2)
+		searchOverlay:SetPoint("TOPLEFT", -C.mult, C.mult)
+		searchOverlay:SetPoint("BOTTOMRIGHT", C.mult, -C.mult)
 
 		bag.icon:SetTexCoord(.08, .92, .08, .92)
 
@@ -96,6 +95,9 @@ tinsert(C.themes["AuroraClassic"], function()
 	BankItemAutoSortButton:GetNormalTexture():SetTexCoord(.17, .83, .17, .83)
 	BankItemAutoSortButton:GetPushedTexture():SetTexCoord(.17, .83, .17, .83)
 	F.CreateBG(BankItemAutoSortButton)
+	local highlight = BankItemAutoSortButton:GetHighlightTexture()
+	highlight:SetColorTexture(1, 1, 1, .25)
+	highlight:SetAllPoints(BankItemAutoSortButton)
 
 	hooksecurefunc("BankFrameItemButton_Update", function(button)
 		if not button.isBag and button.IconQuestTexture:IsShown() then
@@ -113,6 +115,7 @@ tinsert(C.themes["AuroraClassic"], function()
 	F.Reskin(ReagentBankFrameUnlockInfoPurchaseButton)
 
 	-- make button more visible
+	F.StripTextures(ReagentBankFrameUnlockInfo)
 	ReagentBankFrameUnlockInfoBlackBG:SetColorTexture(.1, .1, .1)
 
 	local reagentButtonsStyled = false

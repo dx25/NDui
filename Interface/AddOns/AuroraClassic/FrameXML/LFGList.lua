@@ -8,10 +8,7 @@ tinsert(C.themes["AuroraClassic"], function()
 	-- [[ Category selection ]]
 
 	local CategorySelection = LFGListFrame.CategorySelection
-
-	CategorySelection.Inset.Bg:Hide()
-	select(10, CategorySelection.Inset:GetRegions()):Hide()
-	CategorySelection.Inset:DisableDrawLayer("BORDER")
+	CategorySelection.Inset:Hide()
 
 	F.Reskin(CategorySelection.FindGroupButton)
 	F.Reskin(CategorySelection.StartGroupButton)
@@ -28,8 +25,8 @@ tinsert(C.themes["AuroraClassic"], function()
 			bu.Icon:SetTexCoord(.01, .99, .01, .99)
 
 			local bg = F.CreateBG(bu)
-			bg:SetPoint("TOPLEFT", bu.Icon, -1.2, 1.2)
-			bg:SetPoint("BOTTOMRIGHT", bu.Icon, 1.2, -1.2)
+			bg:SetPoint("TOPLEFT", bu.Icon, -C.mult, C.mult)
+			bg:SetPoint("BOTTOMRIGHT", bu.Icon, C.mult, -C.mult)
 
 			bu.styled = true
 		end
@@ -46,15 +43,12 @@ tinsert(C.themes["AuroraClassic"], function()
 	-- [[ Nothing available ]]
 
 	local NothingAvailable = LFGListFrame.NothingAvailable
-
 	NothingAvailable.Inset:DisableDrawLayer("BORDER")
 
 	-- [[ Search panel ]]
 
 	local SearchPanel = LFGListFrame.SearchPanel
-
-	SearchPanel.ResultsInset.Bg:Hide()
-	SearchPanel.ResultsInset:DisableDrawLayer("BORDER")
+	SearchPanel.ResultsInset:Hide()
 
 	F.Reskin(SearchPanel.RefreshButton)
 	F.Reskin(SearchPanel.BackButton)
@@ -120,11 +114,8 @@ tinsert(C.themes["AuroraClassic"], function()
 	-- [[ Application viewer ]]
 
 	local ApplicationViewer = LFGListFrame.ApplicationViewer
-
 	ApplicationViewer.InfoBackground:Hide()
-
-	ApplicationViewer.Inset.Bg:Hide()
-	ApplicationViewer.Inset:DisableDrawLayer("BORDER")
+	ApplicationViewer.Inset:Hide()
 
 	local function headerOnEnter(self)
 		self.hl:Show()
@@ -179,10 +170,7 @@ tinsert(C.themes["AuroraClassic"], function()
 	-- [[ Entry creation ]]
 
 	local EntryCreation = LFGListFrame.EntryCreation
-
-	EntryCreation.Inset.Bg:Hide()
-	select(10, EntryCreation.Inset:GetRegions()):Hide()
-	EntryCreation.Inset:DisableDrawLayer("BORDER")
+	EntryCreation.Inset:Hide()
 
 	for i = 1, 9 do
 		select(i, EntryCreation.Description:GetRegions()):Hide()
@@ -233,7 +221,6 @@ tinsert(C.themes["AuroraClassic"], function()
 	-- Activity finder
 
 	local ActivityFinder = EntryCreation.ActivityFinder
-
 	ActivityFinder.Background:SetTexture("")
 	ActivityFinder.Dialog.Bg:Hide()
 	for i = 1, 9 do

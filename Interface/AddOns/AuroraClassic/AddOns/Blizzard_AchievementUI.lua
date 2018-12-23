@@ -50,8 +50,8 @@ C.themes["Blizzard_AchievementUI"] = function()
 					bu:SetHighlightTexture(C.media.backdrop)
 					local hl = bu:GetHighlightTexture()
 					hl:SetVertexColor(r, g, b, .2)
-					hl:SetPoint("TOPLEFT", 1, -2)
-					hl:SetPoint("BOTTOMRIGHT", -1, 1)
+					hl:SetPoint("TOPLEFT", bg, C.mult, -C.mult)
+					hl:SetPoint("BOTTOMRIGHT", bg, -C.mult, C.mult)
 				end
 				first = false
 			end
@@ -168,16 +168,11 @@ C.themes["Blizzard_AchievementUI"] = function()
 		local bar = _G["AchievementFrameProgressBar"..index]
 		if not bar.reskinned then
 			bar:SetStatusBarTexture(C.media.backdrop)
-
 			_G["AchievementFrameProgressBar"..index.."BG"]:SetColorTexture(0, 0, 0, .25)
 			_G["AchievementFrameProgressBar"..index.."BorderLeft"]:Hide()
 			_G["AchievementFrameProgressBar"..index.."BorderCenter"]:Hide()
 			_G["AchievementFrameProgressBar"..index.."BorderRight"]:Hide()
-
-			local bg = CreateFrame("Frame", nil, bar)
-			bg:SetPoint("TOPLEFT", -1, 1)
-			bg:SetPoint("BOTTOMRIGHT", 1, -1)
-			F.CreateBD(bg, 0)
+			F.CreateBDFrame(bar, 0)
 
 			bar.reskinned = true
 		end

@@ -54,6 +54,13 @@ local _, class = UnitClass("player")
 C.classcolours = CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS
 local r, g, b = C.classcolours[class].r, C.classcolours[class].g, C.classcolours[class].b
 
+local function SetupPixelFix()
+	local screenHeight = select(2, GetPhysicalScreenSize())
+	local scale = UIParent:GetScale()
+	scale = tonumber(floor(scale*100 + .5)/100)
+	C.mult = 768/screenHeight/scale
+end
+
 function F:dummy()
 end
 
@@ -83,7 +90,7 @@ function F:CreateBD(a)
 	self:SetBackdrop({
 		bgFile = C.media.backdrop,
 		edgeFile = C.media.backdrop,
-		edgeSize = 1.2,
+		edgeSize = C.mult,
 	})
 	self:SetBackdropColor(0, 0, 0, a or AuroraConfig.alpha)
 	self:SetBackdropBorderColor(0, 0, 0)
@@ -95,8 +102,8 @@ function F:CreateBG()
 	if self:GetObjectType() == "Texture" then f = self:GetParent() end
 
 	local bg = f:CreateTexture(nil, "BACKGROUND")
-	bg:SetPoint("TOPLEFT", self, -1.2, 1.2)
-	bg:SetPoint("BOTTOMRIGHT", self, 1.2, -1.2)
+	bg:SetPoint("TOPLEFT", self, -C.mult, C.mult)
+	bg:SetPoint("BOTTOMRIGHT", self, C.mult, -C.mult)
 	bg:SetTexture(C.media.backdrop)
 	bg:SetVertexColor(0, 0, 0)
 
@@ -109,8 +116,8 @@ local buttonR, buttonG, buttonB, buttonA
 
 function F:CreateGradient()
 	local tex = self:CreateTexture(nil, "BORDER")
-	tex:SetPoint("TOPLEFT", 1, -1)
-	tex:SetPoint("BOTTOMRIGHT", -1, 1)
+	tex:SetPoint("TOPLEFT", C.mult, -C.mult)
+	tex:SetPoint("BOTTOMRIGHT", -C.mult, C.mult)
 	tex:SetTexture(useButtonGradientColour and C.media.gradient or C.media.backdrop)
 	tex:SetVertexColor(buttonR, buttonG, buttonB, buttonA)
 
@@ -224,6 +231,7 @@ end
 
 function F:ReskinScroll()
 	local frame = self:GetName()
+	F.StripTextures(self:GetParent())
 
 	local track = (self.trackBG or self.Background or self.Track) or (_G[frame.."Track"] or _G[frame.."BG"])
 	if track then track:Hide() end
@@ -243,8 +251,8 @@ function F:ReskinScroll()
 	bu.bg:SetPoint("BOTTOMRIGHT", bu, 0, 4)
 
 	local tex = F.CreateGradient(self)
-	tex:SetPoint("TOPLEFT", bu.bg, 1, -1)
-	tex:SetPoint("BOTTOMRIGHT", bu.bg, -1, 1)
+	tex:SetPoint("TOPLEFT", bu.bg, C.mult, -C.mult)
+	tex:SetPoint("BOTTOMRIGHT", bu.bg, -C.mult, C.mult)
 
 	local up, down = self:GetChildren()
 	up:SetWidth(17)
@@ -325,8 +333,8 @@ function F:ReskinDropDown()
 	bg:SetPoint("BOTTOMRIGHT", -18, 8)
 
 	local gradient = F.CreateGradient(self)
-	gradient:SetPoint("TOPLEFT", bg, 1, -1)
-	gradient:SetPoint("BOTTOMRIGHT", bg, -1, 1)
+	gradient:SetPoint("TOPLEFT", bg, C.mult, -C.mult)
+	gradient:SetPoint("BOTTOMRIGHT", bg, -C.mult, C.mult)
 end
 
 function F:ReskinClose(a1, p, a2, x, y)
@@ -382,8 +390,8 @@ function F:ReskinInput(height, width)
 	bd:SetPoint("BOTTOMRIGHT")
 
 	local gradient = F.CreateGradient(self)
-	gradient:SetPoint("TOPLEFT", bd, 1, -1)
-	gradient:SetPoint("BOTTOMRIGHT", bd, -1, 1)
+	gradient:SetPoint("TOPLEFT", bd, C.mult, -C.mult)
+	gradient:SetPoint("BOTTOMRIGHT", bd, -C.mult, C.mult)
 
 	if height then self:SetHeight(height) end
 	if width then self:SetWidth(width) end
@@ -549,35 +557,27 @@ function F:StripTextures()
 	end
 end
 
-function F:ReskinPortraitFrame(isButtonFrame)
-	local name = self:GetName()
-
-	_G[name.."Bg"]:Hide()
-	_G[name.."TitleBg"]:Hide()
-	_G[name.."Portrait"]:Hide()
-	_G[name.."PortraitFrame"]:Hide()
-	_G[name.."TopRightCorner"]:Hide()
-	_G[name.."TopLeftCorner"]:Hide()
-	_G[name.."TopBorder"]:Hide()
-	_G[name.."TopTileStreaks"]:SetTexture("")
-	_G[name.."BotLeftCorner"]:Hide()
-	_G[name.."BotRightCorner"]:Hide()
-	_G[name.."BottomBorder"]:Hide()
-	_G[name.."LeftBorder"]:Hide()
-	_G[name.."RightBorder"]:Hide()
-
-	if isButtonFrame then
-		_G[name.."BtnCornerLeft"]:SetTexture("")
-		_G[name.."BtnCornerRight"]:SetTexture("")
-		_G[name.."ButtonBottomBorder"]:SetTexture("")
-
-		self.Inset.Bg:Hide()
-		self.Inset:DisableDrawLayer("BORDER")
+function F:RemoveSlice()
+	for _, tex in next, self.NineSlice do
+		if type(tex) == "table" then
+			tex:Hide()
+		end
 	end
+end
 
-	F.CreateBD(self)
-	F.CreateSD(self)
-	F.ReskinClose(_G[name.."CloseButton"])
+function F:CleanInset()
+	self.Bg:Hide()
+	F.RemoveSlice(self)
+end
+
+function F:ReskinPortraitFrame(setBG)
+	local insetFrame = self.inset or self.Inset
+	if insetFrame then F.CleanInset(insetFrame) end
+	F.StripTextures(self)
+	F.RemoveSlice(self)
+	self.portrait:SetAlpha(0)
+	F.ReskinClose(self.CloseButton)
+	if setBG then F.SetBD(self) end
 end
 
 function F:CreateBDFrame(a)
@@ -586,8 +586,8 @@ function F:CreateBDFrame(a)
 	local lvl = frame:GetFrameLevel()
 
 	local bg = CreateFrame("Frame", nil, frame)
-	bg:SetPoint("TOPLEFT", self, -1.2, 1.2)
-	bg:SetPoint("BOTTOMRIGHT", self, 1.2, -1.2)
+	bg:SetPoint("TOPLEFT", self, -C.mult, C.mult)
+	bg:SetPoint("BOTTOMRIGHT", self, C.mult, -C.mult)
 	bg:SetFrameLevel(lvl == 0 and 1 or lvl - 1)
 	F.CreateBD(bg, a)
 
@@ -752,6 +752,8 @@ local Skin = CreateFrame("Frame")
 Skin:RegisterEvent("ADDON_LOADED")
 Skin:SetScript("OnEvent", function(_, _, addon)
 	if addon == "AuroraClassic" then
+		SetupPixelFix()
+
 		-- [[ Load Variables ]]
 
 		-- remove deprecated or corrupt variables

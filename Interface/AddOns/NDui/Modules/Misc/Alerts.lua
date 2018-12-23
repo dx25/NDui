@@ -73,7 +73,7 @@ function module:RareAlert()
 
 	local cache = {}
 	local function updateAlert(_, id)
-		local instID = select(8, GetInstanceInfo())
+		local _, instType, _, _, _, _, _, instID = GetInstanceInfo()
 		if isIgnored[instID] then return end
 
 		if id and not cache[id] then
@@ -89,7 +89,9 @@ function module:RareAlert()
 			if NDuiDB["Misc"]["AlertinChat"] then
 				print("  -> "..DB.InfoColor..L["Rare Found"]..tex..(info.name or ""))
 			end
-			PlaySoundFile("Sound\\Interface\\PVPFlagTakenMono.ogg", "master")
+			if not NDuiDB["Misc"]["RareAlertInWild"] or instType == "none" then
+				PlaySoundFile("Sound\\Interface\\PVPFlagTakenMono.ogg", "master")
+			end
 			cache[id] = true
 		end
 		if #cache > 666 then wipe(cache) end
@@ -275,7 +277,7 @@ function module:ExplosiveAlert()
 	local function checkAffixes(event)
 		local affixes = C_MythicPlus.GetCurrentAffixes()
 		if not affixes then return end
-		if affixes[3] == 13 then
+		if affixes[3] and affixes[3].id == 13 then
 			B:RegisterEvent("CHALLENGE_MODE_START", startCount)
 			B:RegisterEvent("CHALLENGE_MODE_COMPLETED", endCount)
 			B:RegisterEvent(event, pauseCount)
@@ -297,6 +299,7 @@ function module:PlacedItemAlert()
 		[259409] = true,	-- 海帆盛宴
 		[259410] = true,	-- 船长盛宴
 		[276972] = true,	-- 秘法药锅
+		[286050] = true,	-- 鲜血大餐
 	}
 
 	local lastTime = 0

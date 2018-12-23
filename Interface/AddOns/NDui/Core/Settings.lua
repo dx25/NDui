@@ -2,6 +2,7 @@ local _, ns = ...
 local B, C, L, DB = unpack(ns)
 local module = B:RegisterModule("Settings")
 local pairs, tonumber, wipe = pairs, tonumber, table.wipe
+local min, max, format = math.min, math.max, string.format
 
 -- Addon Info
 print("|cff0080ff< NDui >|cff70C0F5----------------")
@@ -49,25 +50,24 @@ local function ForceRaidFrame()
 	CompactUnitFrameProfiles_UpdateCurrentPanel()
 end
 
-local function ForceUIScale()
-	B.HideOption(Advanced_UseUIScale)
-	B.HideOption(Advanced_UIScaleSlider)
-
+local function SetupUIScale()
 	local scale = NDuiADB["UIScale"]
+	local minScale = .64
+	local fixedHeight = 768/DB.ScreenHeight
 	if NDuiADB["LockUIScale"] then
-		scale = 768/DB.ScreenHeight * .8
-		local minScale = .64
-		if DB.ScreenHeight > 1080 then minScale = .5 end
-		if scale < minScale then scale = minScale end
-		NDuiADB["UIScale"] = scale
+		scale = max(minScale, min(1.1, fixedHeight))
 	end
+	C.mult = fixedHeight/scale
 
 	SetCVar("useUiScale", 1)
+	scale = tonumber(floor(scale*100 + .5)/100)
 	if scale < .64 then
 		UIParent:SetScale(scale)
 	else
 		SetCVar("uiScale", scale)
 	end
+
+	NDuiADB["UIScale"] = scale
 end
 
 local function ForceChatSettings()
@@ -155,11 +155,10 @@ local function ForceSkadaOptions()
 		["profiles"] = {
 			["Default"] = {
 				["windows"] = {
-					{
-						["barheight"] = 18,
+					{	["barheight"] = 18,
 						["classicons"] = false,
 						["barslocked"] = true,
-						["y"] = 24,
+						["y"] = 28,
 						["x"] = -3,
 						["title"] = {
 							["color"] = {
@@ -356,7 +355,7 @@ local function YesTutor()
 			UIErrorsFrame:AddMessage(DB.InfoColor..L["Default Settings Check"])
 		elseif currentPage == 2 then
 			NDuiADB["LockUIScale"] = true
-			ForceUIScale()
+			SetupUIScale()
 			NDuiADB["LockUIScale"] = false
 			UIErrorsFrame:AddMessage(DB.InfoColor..L["UIScale Check"])
 		elseif currentPage == 3 then
@@ -434,12 +433,15 @@ SlashCmdList["NDUI"] = function() HelloWorld() end
 SLASH_NDUI1 = "/ndui"
 
 function module:OnLogin()
+	B.HideOption(Advanced_UseUIScale)
+	B.HideOption(Advanced_UIScaleSlider)
+	SetupUIScale()
+
 	if not NDuiDB["Tutorial"]["Complete"] then
 		HelloWorld()
 		NDuiDB["Tutorial"]["Complete"] = true
 	end
 
-	ForceUIScale()
 	ForceAddonSkins()
 	if NDuiDB["Chat"]["Lock"] then ForceChatSettings() end
 

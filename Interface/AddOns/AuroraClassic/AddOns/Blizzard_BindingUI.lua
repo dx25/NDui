@@ -11,7 +11,7 @@ C.themes["Blizzard_BindingUI"] = function()
 	KeyBindingFrame.scrollFrame.scrollBorderBottom:SetTexture("")
 	KeyBindingFrame.scrollFrame.scrollBorderMiddle:SetTexture("")
 	KeyBindingFrame.scrollFrame.scrollFrameScrollBarBackground:SetTexture("")
-	KeyBindingFrame.categoryList:DisableDrawLayer("BACKGROUND")
+	F.StripTextures(KeyBindingFrame.categoryList)
 	KeyBindingFrame.bindingsContainer:SetBackdrop(nil)
 
 	F.CreateBD(KeyBindingFrame)
@@ -34,8 +34,8 @@ C.themes["Blizzard_BindingUI"] = function()
 		if not button.styled then
 			local selected = button.selectedHighlight
 			selected:SetTexture(C.media.backdrop)
-			selected:SetPoint("TOPLEFT", 1, -1)
-			selected:SetPoint("BOTTOMRIGHT", -1, 1)
+			selected:SetPoint("TOPLEFT", C.mult, -C.mult)
+			selected:SetPoint("BOTTOMRIGHT", -C.mult, C.mult)
 			selected:SetColorTexture(r, g, b, .25)
 			F.Reskin(button)
 

@@ -3,10 +3,8 @@ local F, C = unpack(select(2, ...))
 C.themes["Blizzard_TrainerUI"] = function()
 	local r, g, b = C.r, C.g, C.b
 
-	ClassTrainerFrameBottomInset:DisableDrawLayer("BORDER")
-	ClassTrainerFrame.BG:Hide()
-	ClassTrainerFrameBottomInsetBg:Hide()
-	ClassTrainerFrameMoneyBg:SetAlpha(0)
+	F.ReskinPortraitFrame(ClassTrainerFrame, true)
+	ClassTrainerFrameBottomInset:SetAlpha(0)
 
 	ClassTrainerStatusBarSkillRank:ClearAllPoints()
 	ClassTrainerStatusBarSkillRank:SetPoint("CENTER", ClassTrainerStatusBar, "CENTER", 0, 0)
@@ -23,11 +21,7 @@ C.themes["Blizzard_TrainerUI"] = function()
 	ClassTrainerFrameSkillStepButton.selectedTex:SetPoint("BOTTOMRIGHT", -1, 3)
 	ClassTrainerFrameSkillStepButton.selectedTex:SetTexture(C.media.backdrop)
 	ClassTrainerFrameSkillStepButton.selectedTex:SetVertexColor(r, g, b, .2)
-
-	local icbg = CreateFrame("Frame", nil, ClassTrainerFrameSkillStepButton)
-	icbg:SetPoint("TOPLEFT", ClassTrainerFrameSkillStepButtonIcon, -1, 1)
-	icbg:SetPoint("BOTTOMRIGHT", ClassTrainerFrameSkillStepButtonIcon, 1, -1)
-	F.CreateBD(icbg, 0)
+	F.CreateBDFrame(ClassTrainerFrameSkillStepButton, 0)
 
 	ClassTrainerFrameSkillStepButtonIcon:SetTexCoord(.08, .92, .08, .92)
 
@@ -70,7 +64,6 @@ C.themes["Blizzard_TrainerUI"] = function()
 	ClassTrainerStatusBar:GetStatusBarTexture():SetGradient("VERTICAL", .1, .3, .9, .2, .4, 1)
 	F.CreateBDFrame(ClassTrainerStatusBar, .25)
 
-	F.ReskinPortraitFrame(ClassTrainerFrame, true)
 	F.Reskin(ClassTrainerTrainButton)
 	F.ReskinScroll(ClassTrainerScrollFrameScrollBar)
 	F.ReskinDropDown(ClassTrainerFrameFilterDropDown)

@@ -74,6 +74,7 @@ C.themes["Blizzard_TalentUI"] = function()
 		local shownSpec = spec or playerTalentSpec or 1
 		local sex = self.isPet and UnitSex("pet") or UnitSex("player")
 		local id, _, _, icon = GetSpecializationInfo(shownSpec, nil, self.isPet, nil, sex)
+		if not id then return end
 		local scrollChild = self.spellsScroll.child
 		scrollChild.specIcon:SetTexture(icon)
 
@@ -169,6 +170,7 @@ C.themes["Blizzard_TalentUI"] = function()
 			local ic = _G["PlayerTalentFrameTalentsTalentRow"..i.."Talent"..j.."IconTexture"]
 
 			bu:SetHighlightTexture("")
+			bu.Cover:SetAlpha(0)
 			bu.Slot:SetAlpha(0)
 			bu.knownSelection:SetAlpha(0)
 
@@ -232,12 +234,12 @@ C.themes["Blizzard_TalentUI"] = function()
 	talentList:ClearAllPoints()
 	talentList:SetPoint("LEFT", PlayerTalentFrame, "RIGHT", 2, 0)
 	F.StripTextures(talentList)
+	F.RemoveSlice(talentList)
 	F.CreateBD(talentList)
 	F.CreateSD(talentList)
+	talentList.Inset:Hide()
 
-	PlayerTalentFrameTalentsPvpTalentFrameTalentListInset:SetAlpha(0)
 	F.StripTextures(PlayerTalentFrameTalentsPvpTalentFrame)
-	F.StripTextures(PlayerTalentFrameTalentsPvpTalentFrameTalentListScrollFrameScrollChild)
 	F.ReskinScroll(PlayerTalentFrameTalentsPvpTalentFrameTalentListScrollFrameScrollBar)
 
 	local function updatePVPTalent(self)

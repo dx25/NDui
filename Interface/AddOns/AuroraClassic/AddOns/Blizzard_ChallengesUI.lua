@@ -1,8 +1,7 @@
 local F, C = unpack(select(2, ...))
 
 C.themes["Blizzard_ChallengesUI"] = function()
-	ChallengesFrameInset:DisableDrawLayer("BORDER")
-	ChallengesFrameInsetBg:Hide()
+	ChallengesFrameInset:Hide()
 	for i = 1, 2 do
 		select(i, ChallengesFrame:GetRegions()):Hide()
 	end
@@ -21,7 +20,7 @@ C.themes["Blizzard_ChallengesUI"] = function()
 		end
 
 		if IsAddOnLoaded("AngryKeystones") and not angryStyle then
-			local scheduel, party = select(4, self:GetChildren())
+			local scheduel, party = select(5, self:GetChildren())
 
 			scheduel:GetRegions():SetAlpha(0)
 			select(3, scheduel:GetRegions()):SetAlpha(0)

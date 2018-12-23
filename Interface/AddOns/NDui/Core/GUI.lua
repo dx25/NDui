@@ -4,13 +4,21 @@ local module = B:RegisterModule("GUI")
 
 local format, tonumber, type = string.format, tonumber, type
 local pairs, ipairs, next = pairs, ipairs, next
-local min, max = math.min, math.max
-local r, g, b = DB.r, DB.g, DB.b
+local min, max, tinsert = math.min, math.max, table.insert
+local cr, cg, cb = DB.r, DB.g, DB.b
 local guiTab, guiPage, f = {}, {}
+
+-- Extra setup
+local setupRaidDebuffs, setupClickCast, setupBuffIndicator, setupPlateAura
 
 local function setupGUIScale()
 	if not f then return end
 	f:SetScale(NDuiADB["GUIScale"])
+end
+
+local function setupAuraWatch()
+	f:Hide()
+	SlashCmdList["NDUI_AWCONFIG"]()
 end
 
 -- Default Settings
@@ -66,7 +74,6 @@ local defaultSettings = {
 		SmoothColor = false,
 		PlayerDebuff = false,
 		ToTAuras = false,
-		Boss = true,
 		Arena = true,
 		Castbars = true,
 		SwingBar = false,
@@ -94,6 +101,9 @@ local defaultSettings = {
 		ClassPower = true,
 		QuakeTimer = false,
 		LagString = true,
+		RuneTimer = true,
+		RaidBuffIndicator = true,
+		BuffTimerIndicator = false,
 	},
 	Chat = {
 		Sticky = false,
@@ -211,6 +221,7 @@ local defaultSettings = {
 		ExplosiveCount = false,
 		ExplosiveCache = {},
 		PlacedItemAlert = false,
+		RareAlertInWild = false,
 	},
 	Tutorial = {
 		Complete = false,
@@ -240,6 +251,8 @@ local accountSettings = {
 	DBMRequest = false,
 	SkadaRequest = false,
 	BWRequest = false,
+	RaidAuraWatch = {},
+	CornerBuffs = {},
 }
 
 local function InitialSettings(source, target)
@@ -333,10 +346,10 @@ local optionList = {		-- type, key, value, name, horizon, doubleline
 		{1, "UFs", "LagString", L["Castbar LagString"]},
 		{1, "UFs", "QuakeTimer", L["UFs QuakeTimer"], true},
 		{},--blank
-		{1, "UFs", "Boss", L["Boss Frame"]},
-		{1, "UFs", "Arena", L["Arena Frame"], true},
-		{1, "UFs", "Portrait", L["UFs Portrait"]},
-		{1, "UFs", "ClassPower", L["UFs ClassPower"], true},
+		{1, "UFs", "Arena", L["Arena Frame"]},
+		{1, "UFs", "Portrait", L["UFs Portrait"], true},
+		{1, "UFs", "ClassPower", L["UFs ClassPower"]},
+		{1, "UFs", "RuneTimer", L["UFs RuneTimer"], true},
 		{1, "UFs", "ClassColor", L["Classcolor HpBar"]},
 		{1, "UFs", "SmoothColor", L["Smoothcolor HpBar"], true},
 		{1, "UFs", "PlayerDebuff", L["Player Debuff"]},
@@ -362,13 +375,16 @@ local optionList = {		-- type, key, value, name, horizon, doubleline
 		{3, "UFs", "NumGroups", L["Num Groups"], false, {4, 8, 0}},
 		{3, "UFs", "RaidScale", L["RaidFrame Scale"], true, {.8, 1.5, 2}},
 		{},--blank
+		{1, "UFs", "RaidBuffIndicator", "|cff00cc4c"..L["RaidBuffIndicator"], nil, function() setupBuffIndicator() end},
+		{1, "UFs", "BuffTimerIndicator", L["BuffTimerIndicator"], true},
+		{},--blank
 		{1, "UFs", "AurasClickThrough", L["RaidAuras ClickThrough"]},
 		{1, "UFs", "AutoRes", L["UFs AutoRes"], true},
-		{1, "UFs", "RaidClickSets", L["Enable ClickSets"]},
-		{1, "UFs", "InstanceAuras", L["Instance Auras"], true},
+		{1, "UFs", "RaidClickSets", L["Enable ClickSets"], nil, function() setupClickCast() end},
+		{1, "UFs", "InstanceAuras", L["Instance Auras"], true, function() setupRaidDebuffs() end},
 	},
 	[5] = {
-		{1, "Nameplate", "Enable", "|cff00cc4c"..L["Enable Nameplate"]},
+		{1, "Nameplate", "Enable", "|cff00cc4c"..L["Enable Nameplate"], nil, function() setupPlateAura() end},
 		{},--blank
 		{1, "Nameplate", "CustomUnitColor", "|cff00cc4c"..L["CustomUnitColor"]},
 		{5, "Nameplate", "CustomColor", L["Custom Color"], 2},
@@ -398,9 +414,9 @@ local optionList = {		-- type, key, value, name, horizon, doubleline
 		{3, "Nameplate", "Height", L["NP Height"], true, {5, 15, 0}},
 	},
 	[6] = {
-		{1, "AuraWatch", "Enable", "|cff00cc4c"..L["Enable AuraWatch"]},
+		{1, "AuraWatch", "Enable", "|cff00cc4c"..L["Enable AuraWatch"], nil, setupAuraWatch},
 		{1, "AuraWatch", "ClickThrough", L["AuraWatch ClickThrough"]},
-		{3, "AuraWatch", "IconScale", L["AuraWatch IconScale"], false, {.8, 2, 1}},
+		{3, "AuraWatch", "IconScale", L["AuraWatch IconScale"], true, {.8, 2, 1}},
 		{},--blank
 		{1, "Auras", "Statue", L["Enable Statue"]},
 		{1, "Auras", "Totems", L["Enable Totems"], true},
@@ -430,16 +446,17 @@ local optionList = {		-- type, key, value, name, horizon, doubleline
 		{1, "Misc", "PlacedItemAlert", L["Placed Item Alert"].."*", true},
 		{},--blank
 		{1, "Misc", "RareAlerter", "|cff00cc4c"..L["Rare Alert"]},
-		{1, "Misc", "AlertinChat", L["Alert In Chat"].."*", true},
+		{1, "Misc", "AlertinChat", L["Alert In Chat"].."*"},
+		{1, "Misc", "RareAlertInWild", L["RareAlertInWild"].."*", true},
 	},
 	[8] = {
 		{1, "Chat", "Lock", "|cff00cc4c"..L["Lock Chat"]},
-		{},--blank
-		{1, "Chat", "Freedom", L["Language Filter"]},
 		{1, "Chat", "Sticky", L["Chat Sticky"].."*", true, nil, function() B.ChatWhisperSticky() end},
 		{1, "Chat", "Oldname", L["Default Channel"]},
 		{1, "Chat", "WhisperColor", L["Differ WhipserColor"].."*", true},
+		{1, "Chat", "Freedom", L["Language Filter"]},
 		{1, "ACCOUNT", "Timestamp", L["Timestamp"], false, nil, function() B.UpdateTimestamp() end},
+		{2, "ACCOUNT", "ChatAtList", L["@List"].."*", true, nil, function() B.GenChatAtList() end},
 		{},--blank
 		{1, "Chat", "EnableFilter", "|cff00cc4c"..L["Enable Chatfilter"]},
 		{1, "Chat", "BlockAddonAlert", L["Block Addon Alert"], true},
@@ -449,7 +466,6 @@ local optionList = {		-- type, key, value, name, horizon, doubleline
 		{1, "Chat", "Invite", "|cff00cc4c"..L["Whisper Invite"]},
 		{1, "Chat", "GuildInvite", L["Guild Invite Only"].."*", true},
 		{2, "Chat", "Keyword", L["Whisper Keyword"].."*", false, nil, function() B.GenWhisperList() end},
-		{2, "ACCOUNT", "ChatAtList", L["@List"].."*", true, nil, function() B.GenChatAtList() end},
 	},
 	[9] = {
 		{1, "Map", "Coord", L["Map Coords"]},
@@ -515,7 +531,7 @@ local optionList = {		-- type, key, value, name, horizon, doubleline
 	[13] = {
 		{1, "ACCOUNT", "VersionCheck", L["Version Check"]},
 		{},--blank
-		{3, "ACCOUNT", "UIScale", L["Setup UIScale"], false, {.5, 1.1, 2}},
+		{3, "ACCOUNT", "UIScale", L["Setup UIScale"], false, {.4, 1.1, 2}},
 		{1, "ACCOUNT", "LockUIScale", "|cff00cc4c"..L["Lock UIScale"], true},
 		{},--blank
 		{3, "ACCOUNT", "GUIScale", L["GUI Scale"].."*", false, {.5, 1.5, 2}, setupGUIScale},
@@ -526,7 +542,7 @@ local optionList = {		-- type, key, value, name, horizon, doubleline
 local function SelectTab(i)
 	for num = 1, #tabList do
 		if num == i then
-			guiTab[num]:SetBackdropColor(r, g, b, .3)
+			guiTab[num]:SetBackdropColor(cr, cg, cb, .3)
 			guiTab[num].checked = true
 			guiPage[num]:Show()
 		else
@@ -550,7 +566,7 @@ local function CreateTab(parent, i, name)
 	end)
 	tab:SetScript("OnEnter", function(self)
 		if self.checked then return end
-		self:SetBackdropColor(r, g, b, .3)
+		self:SetBackdropColor(cr, cg, cb, .3)
 	end)
 	tab:SetScript("OnLeave", function(self)
 		if self.checked then return end
@@ -579,30 +595,36 @@ local function CreateOption(i)
 	local parent, offset = guiPage[i].child, 20
 
 	for _, option in pairs(optionList[i]) do
-		local type, key, value, name, horizon, data, callback = unpack(option)
+		local optType, key, value, name, horizon, data, callback = unpack(option)
 		-- Checkboxes
-		if type == 1 then
+		if optType == 1 then
 			local cb = B.CreateCheckBox(parent)
+			cb:SetHitRectInsets(-5, -5, -5, -5)
 			if horizon then
 				cb:SetPoint("TOPLEFT", 330, -offset + 35)
 			else
 				cb:SetPoint("TOPLEFT", 20, -offset)
 				offset = offset + 35
 			end
-			B.CreateFS(cb, 14, name, false, "LEFT", 30, 0)
+			cb.name = B.CreateFS(cb, 14, name, false, "LEFT", 30, 0)
 			cb:SetChecked(NDUI_VARIABLE(key, value))
 			cb:SetScript("OnClick", function()
 				NDUI_VARIABLE(key, value, cb:GetChecked())
 				if callback then callback() end
 			end)
+			if data and type(data) == "function" then
+				local bu = B.CreateGear(parent)
+				bu:SetPoint("LEFT", cb.name, "RIGHT", -2, 1)
+				bu:SetScript("OnClick", data)
+			end
 		-- Editbox
-		elseif type == 2 then
+		elseif optType == 2 then
 			local eb = B.CreateEditBox(parent, 200, 28)
 			eb:SetMaxLetters(200)
 			if horizon then
-				eb:SetPoint("TOPLEFT", 345, -offset + 50)
+				eb:SetPoint("TOPLEFT", 345, -offset + 45)
 			else
-				eb:SetPoint("TOPLEFT", 35, -offset - 20)
+				eb:SetPoint("TOPLEFT", 35, -offset - 25)
 				offset = offset + 70
 			end
 			eb:SetText(NDUI_VARIABLE(key, value))
@@ -624,7 +646,7 @@ local function CreateOption(i)
 
 			B.CreateFS(eb, 14, name, "system", "CENTER", 0, 25)
 		-- Slider
-		elseif type == 3 then
+		elseif optType == 3 then
 			local min, max, step = unpack(data)
 			local s = CreateFrame("Slider", key..value.."Slider", parent, "OptionsSliderTemplate")
 			if horizon then
@@ -659,7 +681,7 @@ local function CreateOption(i)
 			thumb:SetTexture(DB.sparkTex)
 			thumb:SetBlendMode("ADD")
 		-- Dropdown
-		elseif type == 4 then
+		elseif optType == 4 then
 			local dd = B.CreateDropDown(parent, 200, 28, data)
 			if horizon then
 				dd:SetPoint("TOPLEFT", 345, -offset + 50)
@@ -690,8 +712,8 @@ local function CreateOption(i)
 
 			B.CreateFS(dd, 14, name, "system", "CENTER", 0, 25)
 		-- Colorswatch
-		elseif type == 5 then
-			local f = CreateFrame("Button", nil, parent)
+		elseif optType == 5 then
+			local f = B.CreateColorSwatch(parent)
 			local width = 25 + (horizon or 0)*155
 			if horizon then
 				f:SetPoint("TOPLEFT", width, -offset + 30)
@@ -699,25 +721,19 @@ local function CreateOption(i)
 				f:SetPoint("TOPLEFT", width, -offset - 5)
 				offset = offset + 35
 			end
-			f:SetSize(18, 18)
-			B.CreateBD(f, 1)
 			B.CreateFS(f, 14, name, false, "LEFT", 26, 0)
-
-			local tex = f:CreateTexture()
-			tex:SetPoint("TOPLEFT", 2, -2)
-			tex:SetPoint("BOTTOMRIGHT", -2, 2)
-			tex:SetColorTexture(NDUI_VARIABLE(key, value).r, NDUI_VARIABLE(key, value).g, NDUI_VARIABLE(key, value).b)
+			f.tex:SetVertexColor(NDUI_VARIABLE(key, value).r, NDUI_VARIABLE(key, value).g, NDUI_VARIABLE(key, value).b)
 
 			local function onUpdate()
 				local r, g, b = ColorPickerFrame:GetColorRGB()
-				tex:SetColorTexture(r, g, b)
+				f.tex:SetVertexColor(r, g, b)
 				NDUI_VARIABLE(key, value).r, NDUI_VARIABLE(key, value).g, NDUI_VARIABLE(key, value).b = r, g, b
 				if callback then callback() end
 			end
 
 			local function onCancel()
 				local r, g, b = ColorPicker_GetPreviousValues()
-				tex:SetColorTexture(r, g, b)
+				f.tex:SetVertexColor(r, g, b)
 				NDUI_VARIABLE(key, value).r, NDUI_VARIABLE(key, value).g, NDUI_VARIABLE(key, value).b = r, g, b
 			end
 
@@ -729,7 +745,7 @@ local function CreateOption(i)
 				ColorPickerFrame:SetColorRGB(r, g, b)
 				ColorPickerFrame:Show()
 			end)
-		-- Blank, no type
+		-- Blank, no optType
 		else
 			local l = CreateFrame("Frame", nil, parent)
 			l:SetPoint("TOPLEFT", 25, -offset - 12)
@@ -782,13 +798,14 @@ local function clearEdit(options)
 	end
 end
 
-local raidDebuffsGUI, clickCastGUI, autoSelectInstance
+local raidDebuffsGUI, clickCastGUI, buffIndicatorGUI, plateGUI
 
-local function setupRaidDebuffs()
+function setupRaidDebuffs()
 	if clickCastGUI and clickCastGUI:IsShown() then clickCastGUI:Hide() end
+	if buffIndicatorGUI and buffIndicatorGUI:IsShown() then buffIndicatorGUI:Hide() end
 	if raidDebuffsGUI then ToggleFrame(raidDebuffsGUI) return end
 
-	raidDebuffsGUI = createExtraGUI(guiPage[4], L["RaidFrame Debuffs"], true)
+	raidDebuffsGUI = createExtraGUI(guiPage[4], L["RaidFrame Debuffs"].."*", true)
 	raidDebuffsGUI:SetScript("OnHide", B.UpdateRaidDebuffs)
 
 	local barTable = {}
@@ -846,20 +863,6 @@ local function setupRaidDebuffs()
 
 	options[3] = module:CreateEditbox(frame, "ID*", 10, -90, L["ID Intro"])
 	options[4] = module:CreateEditbox(frame, L["Priority"], 120, -90, L["Priority Intro"])
-
-	function autoSelectInstance()
-		local instName = GetInstanceInfo()
-		for i = 1, 2 do
-			local option = options[i]
-			for j = 1, #option.options do
-				local name = option.options[j].text
-				if instName == name then
-					iType.options[i]:Click()
-					options[i].options[j]:Click()
-				end
-			end
-		end
-	end
 
 	local function analyzePrio(priority)
 		priority = priority or 2
@@ -991,10 +994,28 @@ local function setupRaidDebuffs()
 		end
 	end
 	updateBars("")
+
+	local function autoSelectInstance()
+		local instName, instType = GetInstanceInfo()
+		if instType == "none" then return end
+		for i = 1, 2 do
+			local option = options[i]
+			for j = 1, #option.options do
+				local name = option.options[j].text
+				if instName == name then
+					iType.options[i]:Click()
+					options[i].options[j]:Click()
+				end
+			end
+		end
+	end
+	autoSelectInstance()
+	raidDebuffsGUI:HookScript("OnShow", autoSelectInstance)
 end
 
-local function setupClickCast()
+function setupClickCast()
 	if raidDebuffsGUI and raidDebuffsGUI:IsShown() then raidDebuffsGUI:Hide() end
+	if buffIndicatorGUI and buffIndicatorGUI:IsShown() then buffIndicatorGUI:Hide() end
 	if clickCastGUI then ToggleFrame(clickCastGUI) return end
 
 	clickCastGUI = createExtraGUI(guiPage[4], L["Add ClickSets"], true)
@@ -1102,15 +1123,14 @@ local function setupClickCast()
 	end
 end
 
-local plateGUI
-local function setupPlateAura()
+function setupPlateAura()
 	if plateGUI then ToggleFrame(plateGUI) return end
 
 	plateGUI = createExtraGUI(guiPage[5])
 
 	local frameData = {
-		[1] = {text = L["WhiteList"], offset = -25, barList = {}},
-		[2] = {text = L["BlackList"], offset = -315, barList = {}},
+		[1] = {text = L["WhiteList"].."*", offset = -25, barList = {}},
+		[2] = {text = L["BlackList"].."*", offset = -315, barList = {}},
 	}
 
 	local function createBar(parent, index, spellID)
@@ -1169,8 +1189,167 @@ local function setupPlateAura()
 	end
 end
 
+function setupBuffIndicator()
+	if raidDebuffsGUI and raidDebuffsGUI:IsShown() then raidDebuffsGUI:Hide() end
+	if clickCastGUI and clickCastGUI:IsShown() then clickCastGUI:Hide() end
+	if buffIndicatorGUI then ToggleFrame(buffIndicatorGUI) return end
+
+	buffIndicatorGUI = createExtraGUI(f)
+
+	local frameData = {
+		[1] = {text = L["RaidBuffWatch"].."*", offset = -25, width = 160, barList = {}},
+		[2] = {text = L["BuffIndicator"].."*", offset = -315, width = 70, barList = {}},
+	}
+	local decodeAnchor = {
+		["TL"] = "TOPLEFT",
+		["T"] = "TOP",
+		["TR"] = "TOPRIGHT",
+		["L"] = "LEFT",
+		["R"] = "RIGHT",
+		["BL"] = "BOTTOMLEFT",
+		["B"] = "BOTTOM",
+		["BR"] = "BOTTOMRIGHT",
+	}
+	local anchors = {"TL", "T", "TR", "L", "R", "BL", "B", "BR"}
+
+	local function createBar(parent, index, spellID, anchor, r, g, b)
+		local name, _, texture = GetSpellInfo(spellID)
+		local bar = CreateFrame("Frame", nil, parent)
+		bar:SetSize(220, 30)
+		B.CreateBD(bar, .3)
+		frameData[index].barList[spellID] = bar
+
+		local icon, close = module:CreateBarWidgets(bar, texture)
+		B.AddTooltip(icon, "ANCHOR_RIGHT", spellID)
+		close:SetScript("OnClick", function()
+			bar:Hide()
+			if index == 1 then
+				NDuiADB["RaidAuraWatch"][spellID] = nil
+			else
+				NDuiADB["CornerBuffs"][DB.MyClass][spellID] = nil
+			end
+			frameData[index].barList[spellID] = nil
+			sortBars(frameData[index].barList)
+		end)
+
+		name = L[anchor] or name
+		local text = B.CreateFS(bar, 14, name, false, "LEFT", 30, 0)
+		text:SetWidth(180)
+		text:SetJustifyH("LEFT")
+		if anchor then text:SetTextColor(r, g, b) end
+
+		sortBars(frameData[index].barList)
+	end
+
+	local function addClick(parent, index)
+		local spellID = tonumber(parent.box:GetText())
+		if not spellID or not GetSpellInfo(spellID) then UIErrorsFrame:AddMessage(DB.InfoColor..L["Incorrect SpellID"]) return end
+		local anchor, r, g, b
+		if index == 1 then
+			if NDuiADB["RaidAuraWatch"][spellID] then UIErrorsFrame:AddMessage(DB.InfoColor..L["Existing ID"]) return end
+			NDuiADB["RaidAuraWatch"][spellID] = true
+		else
+			anchor, r, g, b = parent.dd.Text:GetText(), parent.swatch.tex:GetVertexColor()
+			if NDuiADB["CornerBuffs"][DB.MyClass][spellID] then UIErrorsFrame:AddMessage(DB.InfoColor..L["Existing ID"]) return end
+			anchor = decodeAnchor[anchor]
+			NDuiADB["CornerBuffs"][DB.MyClass][spellID] = {anchor, {r, g, b}}
+		end
+		createBar(parent.child, index, spellID, anchor, r, g, b)
+		parent.box:SetText("")
+	end
+
+	local currentIndex
+	StaticPopupDialogs["RESET_NDUI_RaidAuraWatch"] = {
+		text = L["Reset your raiddebuffs list?"],
+		button1 = YES,
+		button2 = NO,
+		OnAccept = function()
+			if currentIndex == 1 then
+				NDuiADB["RaidAuraWatch"] = nil
+			else
+				NDuiADB["CornerBuffs"][DB.MyClass] = nil
+			end
+			ReloadUI()
+		end,
+		whileDead = 1,
+	}
+	for index, value in ipairs(frameData) do
+		B.CreateFS(buffIndicatorGUI, 14, value.text, "system", "TOPLEFT", 20, value.offset)
+
+		local frame = CreateFrame("Frame", nil, buffIndicatorGUI)
+		frame:SetSize(280, 250)
+		frame:SetPoint("TOPLEFT", 10, value.offset - 25)
+		B.CreateBD(frame, .3)
+
+		local scroll = module:CreateScroll(frame, 240, 200)
+		scroll.box = B.CreateEditBox(frame, value.width, 25)
+		scroll.box:SetPoint("TOPLEFT", 10, -10)
+		scroll.box:SetMaxLetters(6)
+		scroll.add = B.CreateButton(frame, 45, 25, ADD)
+		scroll.add:SetPoint("TOPRIGHT", -8, -10)
+		scroll.add:SetScript("OnClick", function()
+			addClick(scroll, index)
+		end)
+		scroll.reset = B.CreateButton(frame, 45, 25, RESET)
+		scroll.reset:SetPoint("RIGHT", scroll.add, "LEFT", -5, 0)
+		scroll.reset:SetScript("OnClick", function()
+			currentIndex = index
+			StaticPopup_Show("RESET_NDUI_RaidAuraWatch")
+		end)
+		if index == 1 then
+			for spellID in pairs(NDuiADB["RaidAuraWatch"]) do
+				createBar(scroll.child, index, spellID)
+			end
+		else
+			scroll.dd = B.CreateDropDown(frame, 45, 25, anchors)
+			scroll.dd:SetPoint("TOPLEFT", 10, -10)
+			scroll.dd.options[1]:Click()
+
+			local function optionOnEnter(self)
+				GameTooltip:SetOwner(self, "ANCHOR_TOP")
+				GameTooltip:ClearLines()
+				GameTooltip:AddLine(L[decodeAnchor[self.text]], 1, 1, 1)
+				GameTooltip:Show()
+			end
+			for i = 1, 8 do
+				scroll.dd.options[i]:HookScript("OnEnter", optionOnEnter)
+				scroll.dd.options[i]:HookScript("OnLeave", GameTooltip_Hide)
+			end
+			scroll.box:SetPoint("TOPLEFT", scroll.dd, "TOPRIGHT", 25, 0)
+
+			local r, g, b = 1, 1, 1
+			local swatch = B.CreateColorSwatch(frame)
+			swatch:SetPoint("LEFT", scroll.box, "RIGHT", 5, 0)
+			swatch.tex:SetVertexColor(r, g, b)
+			scroll.swatch = swatch
+
+			local function onUpdate()
+				local nr, ng, nb = ColorPickerFrame:GetColorRGB()
+				swatch.tex:SetVertexColor(nr, ng, nb)
+				r, g, b = nr, ng, nb
+			end
+			local function onCancel()
+				local pr, pg, pb = ColorPicker_GetPreviousValues()
+				swatch.tex:SetVertexColor(pr, pg, pb)
+				r, g, b = pr, pg, pb
+			end
+			swatch:SetScript("OnClick", function()
+				ColorPickerFrame.func = onUpdate
+				ColorPickerFrame.previousValues = {r = r, g = g, b = b}
+				ColorPickerFrame.cancelFunc = onCancel
+				ColorPickerFrame:SetColorRGB(r, g, b)
+				ColorPickerFrame:Show()
+			end)
+
+			for spellID, value in pairs(NDuiADB["CornerBuffs"][DB.MyClass]) do
+				createBar(scroll.child, index, spellID, value[1], unpack(value[2]))
+			end
+		end
+	end
+end
+
 local function OpenGUI()
-	if not f and InCombatLockdown() then UIErrorsFrame:AddMessage(DB.InfoColor..ERR_NOT_IN_COMBAT) return end
+	if InCombatLockdown() then UIErrorsFrame:AddMessage(DB.InfoColor..ERR_NOT_IN_COMBAT) return end
 	if f then f:Show() return end
 
 	-- Main Frame
@@ -1181,9 +1360,7 @@ local function OpenGUI()
 	f:SetPoint("CENTER")
 	f:SetFrameStrata("HIGH")
 	B.CreateMF(f)
-	B.CreateBD(f)
-	B.CreateSD(f)
-	B.CreateTex(f)
+	B.SetBackground(f)
 	B.CreateFS(f, 18, L["NDui Console"], true, "TOP", 0, -10)
 	B.CreateFS(f, 16, DB.Version.." ("..DB.Support..")", false, "TOP", 0, -30)
 
@@ -1218,7 +1395,8 @@ local function OpenGUI()
 		guiPage[i] = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
 		guiPage[i]:SetPoint("TOPLEFT", 160, -50)
 		guiPage[i]:SetSize(610, 500)
-		B.CreateBD(guiPage[i], .3)
+		local bg = B.CreateBG(guiPage[i])
+		B.CreateBD(bg, .3)
 		guiPage[i]:Hide()
 		guiPage[i].child = CreateFrame("Frame", nil, guiPage[i])
 		guiPage[i].child:SetSize(610, 1)
@@ -1267,37 +1445,20 @@ local function OpenGUI()
 	end)
 	credit:SetScript("OnLeave", GameTooltip_Hide)
 
-	-- Toggle RaidFrame Debuffs
-	local raidDebuffs = B.CreateButton(guiPage[4].child, 150, 30, L["RaidFrame Debuffs"].."*")
-	raidDebuffs:SetPoint("TOPLEFT", 340, -370)
-	raidDebuffs.text:SetTextColor(.6, .8, 1)
-	raidDebuffs:SetScript("OnClick", function()
-		setupRaidDebuffs()
-		autoSelectInstance()
-	end)
+	local function showLater(event)
+		if event == "PLAYER_REGEN_DISABLED" then
+			if f:IsShown() then
+				f:Hide()
+				B:RegisterEvent("PLAYER_REGEN_ENABLED", showLater)
+			end
+		else
+			f:Show()
+			B:UnregisterEvent(event, showLater)
+		end
+	end
+	B:RegisterEvent("PLAYER_REGEN_DISABLED", showLater)
 
-	-- Toggle RaidFrame ClickSets
-	local clickSet = B.CreateButton(guiPage[4].child, 150, 30, L["Add ClickSets"])
-	clickSet:SetPoint("TOPLEFT", 40, -370)
-	clickSet.text:SetTextColor(.6, .8, 1)
-	clickSet:SetScript("OnClick", setupClickCast)
-
-	-- Toggle Nameplate aurafilter
-	local plate = B.CreateButton(guiPage[5].child, 150, 30, L["Nameplate AuraFilter"].."*")
-	plate:SetPoint("TOPLEFT", 340, -20)
-	plate.text:SetTextColor(.6, .8, 1)
-	plate:SetScript("OnClick", setupPlateAura)
-
-	-- Toggle AuraWatch Console
-	local aura = B.CreateButton(guiPage[6].child, 150, 30, L["Add AuraWatch"])
-	aura:SetPoint("TOPLEFT", 340, -100)
-	aura.text:SetTextColor(.6, .8, 1)
-	aura:SetScript("OnClick", function()
-		f:Hide()
-		SlashCmdList["NDUI_AWCONFIG"]()
-	end)
-
-	-- Reset detail skin
+	-- Reset Details skin
 	local detail = B.CreateButton(guiPage[10].child, 50, 25, RESET)
 	detail:SetPoint("TOPLEFT", 480, -300)
 	detail.text:SetTextColor(.6, .8, 1)

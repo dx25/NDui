@@ -76,7 +76,8 @@ function module:CreateScroll(parent, width, height, text)
 	local scroll = CreateFrame("ScrollFrame", nil, parent, "UIPanelScrollFrameTemplate")
 	scroll:SetSize(width, height)
 	scroll:SetPoint("BOTTOMLEFT", 10, 10)
-	B.CreateBD(scroll, .2)
+	local bg = B.CreateBG(scroll)
+	B.CreateBD(bg, .2)
 	if text then
 		B.CreateFS(scroll, 15, text, false, "TOPLEFT", 5, 20)
 	end
@@ -109,6 +110,14 @@ function module:CreateBarWidgets(parent, texture)
 	return icon, close
 end
 
+local function auraWatchShow()
+	SlashCmdList.AuraWatch("move")
+end
+
+local function auraWatchHide()
+	SlashCmdList.AuraWatch("lock")
+end
+
 local function CreatePanel()
 	if f then f:Show() return end
 
@@ -116,14 +125,16 @@ local function CreatePanel()
 	f = CreateFrame("Frame", "NDui_AWConfig", UIParent)
 	f:SetPoint("CENTER")
 	f:SetSize(800, 500)
-	B.CreateBD(f)
-	B.CreateSD(f)
-	B.CreateTex(f)
+	B.SetBackground(f)
 	B.CreateMF(f)
 	B.CreateFS(f, 17, L["AWConfig Title"], true, "TOP", 0, -10)
 	B.CreateFS(f, 15, L["Groups"], true, "TOPLEFT", 30, -50)
 	f:SetFrameStrata("HIGH")
 	tinsert(UISpecialFrames, "NDui_AWConfig")
+
+	auraWatchShow()
+	f:HookScript("OnShow", auraWatchShow)
+	f:HookScript("OnHide", auraWatchHide)
 
 	f.Close = B.CreateButton(f, 80, 25, CLOSE)
 	f.Close:SetPoint("BOTTOMRIGHT", -20, 15)

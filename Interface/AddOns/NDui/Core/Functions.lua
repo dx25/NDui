@@ -19,7 +19,7 @@ end
 -- Create Backdrop
 function B:CreateBD(a)
 	self:SetBackdrop({
-		bgFile = DB.bdTex, edgeFile = DB.bdTex, edgeSize = 1.2,
+		bgFile = DB.bdTex, edgeFile = DB.bdTex, edgeSize = C.mult,
 	})
 	self:SetBackdropColor(0, 0, 0, a or .5)
 	self:SetBackdropBorderColor(0, 0, 0)
@@ -48,7 +48,7 @@ end
 function B:CreateBG(offset)
 	local frame = self
 	if self:GetObjectType() == "Texture" then frame = self:GetParent() end
-	offset = offset or 1.2
+	offset = offset or C.mult
 	local lvl = frame:GetFrameLevel()
 
 	local bg = CreateFrame("Frame", nil, frame)
@@ -71,6 +71,17 @@ function B:CreateTex()
 	self.Tex:SetHorizTile(true)
 	self.Tex:SetVertTile(true)
 	self.Tex:SetBlendMode("ADD")
+end
+
+function B:SetBackground()
+	if IsAddOnLoaded("AuroraClassic") then
+		local F = unpack(AuroraClassic)
+		F.SetBD(self)
+	else
+		B.CreateBD(self)
+		B.CreateSD(self)
+		B.CreateTex(self)
+	end
 end
 
 -- Frame Text
@@ -202,6 +213,19 @@ function B:CreateIF(mouse, cd)
 		self.CD:SetAllPoints()
 		self.CD:SetReverse(true)
 	end
+end
+
+function B:CreateGear(name)
+	local bu = CreateFrame("Button", name, self)
+	bu:SetSize(22, 22)
+	bu.Icon = bu:CreateTexture(nil, "ARTWORK")
+	bu.Icon:SetAllPoints()
+	bu.Icon:SetTexture(DB.gearTex)
+	bu.Icon:SetTexCoord(0, .5, 0, .5)
+	bu:SetHighlightTexture(DB.gearTex)
+	bu:GetHighlightTexture():SetTexCoord(0, .5, 0, .5)
+
+	return bu
 end
 
 -- Statusbar
@@ -366,25 +390,58 @@ function B:SmoothBar()
 end
 
 -- Timer Format
+local day, hour, minute = 86400, 3600, 60
 function B.FormatTime(s)
-	local day, hour, minute = 86400, 3600, 60
-
 	if s >= day then
-		return format("%d"..DB.MyColor.."d", s/day), s % day
+		return format("%d"..DB.MyColor.."d", s/day), s%day
 	elseif s >= hour then
-		return format("%d"..DB.MyColor.."h", s/hour), s % hour
+		return format("%d"..DB.MyColor.."h", s/hour), s%hour
 	elseif s >= minute then
-		return format("%d"..DB.MyColor.."m", s/minute), s % minute
-	elseif s < 3 then
+		return format("%d"..DB.MyColor.."m", s/minute), s%minute
+	elseif s > 10 then
+		return format("|cffcccc33%d|r", s), s - floor(s)
+	elseif s > 3 then
+		return format("|cffffff00%d|r", s), s - floor(s)
+	else
 		if NDuiDB["Actionbar"]["DecimalCD"] then
 			return format("|cffff0000%.1f|r", s), s - format("%.1f", s)
 		else
 			return format("|cffff0000%d|r", s + .5), s - floor(s)
 		end
-	elseif s < 10 then
-		return format("|cffffff00%d|r", s), s - floor(s)
+	end
+end
+
+function B.FormatTimeRaw(s)
+	if s >= day then
+		return format("%dd", s/day)
+	elseif s >= hour then
+		return format("%dh", s/hour)
+	elseif s >= minute then
+		return format("%dm", s/minute)
+	elseif s >= 3 then
+		return floor(s)
 	else
-		return format("|cffcccc33%d|r", s), s - floor(s)
+		if NDuiDB["Actionbar"]["DecimalCD"] then
+			return format("%.1f", s)
+		else
+			return format("%d", s + .5)
+		end
+	end
+end
+
+function B:CooldownOnUpdate(elapsed, raw)
+	local formatTime = raw and B.FormatTimeRaw or B.FormatTime
+	self.elapsed = (self.elapsed or 0) + elapsed
+	if self.elapsed >= .1 then
+		local timeLeft = self.expiration - GetTime()
+		if timeLeft > 0 then
+			local text = formatTime(timeLeft)
+			self.timer:SetText(text)
+		else
+			self:SetScript("OnUpdate", nil)
+			self.timer:SetText(nil)
+		end
+		self.elapsed = 0
 	end
 end
 
@@ -472,7 +529,7 @@ function B:CreateEditBox(width, height)
 	local eb = CreateFrame("EditBox", nil, self)
 	eb:SetSize(width, height)
 	eb:SetAutoFocus(false)
-	eb:SetTextInsets(10, 10, 0, 0)
+	eb:SetTextInsets(5, 5, 0, 0)
 	eb:SetFontObject(GameFontHighlight)
 	B.CreateBD(eb, .3)
 	eb:SetScript("OnEscapePressed", function()
@@ -489,20 +546,14 @@ end
 function B:CreateDropDown(width, height, data)
 	local dd = CreateFrame("Frame", nil, self)
 	dd:SetSize(width, height)
-	B.CreateBD(dd, .3)
+	B.CreateBD(dd)
+	dd:SetBackdropBorderColor(1, 1, 1, .2)
 	dd.Text = B.CreateFS(dd, 14, "", false, "LEFT", 5, 0)
 	dd.Text:SetPoint("RIGHT", -5, 0)
 	dd.options = {}
 
-	local bu = CreateFrame("Button", nil, dd)
+	local bu = B.CreateGear(dd)
 	bu:SetPoint("LEFT", dd, "RIGHT", -2, 0)
-	bu:SetSize(22, 22)
-	bu.Icon = bu:CreateTexture(nil, "ARTWORK")
-	bu.Icon:SetAllPoints()
-	bu.Icon:SetTexture(DB.gearTex)
-	bu.Icon:SetTexCoord(0, .5, 0, .5)
-	bu:SetHighlightTexture(DB.gearTex)
-	bu:GetHighlightTexture():SetTexCoord(0, .5, 0, .5)
 	local list = CreateFrame("Frame", nil, dd)
 	list:SetPoint("TOP", dd, "BOTTOM")
 	B.CreateBD(list, 1)
@@ -558,4 +609,17 @@ function B:CreateDropDown(width, height, data)
 
 	dd.Type = "DropDown"
 	return dd
+end
+
+function B:CreateColorSwatch()
+	local swatch = CreateFrame("Button", nil, self)
+	swatch:SetSize(18, 18)
+	B.CreateBD(swatch, 1)
+	local tex = swatch:CreateTexture()
+	tex:SetPoint("TOPLEFT", 2, -2)
+	tex:SetPoint("BOTTOMRIGHT", -2, 2)
+	tex:SetTexture(DB.bdTex)
+	swatch.tex = tex
+
+	return swatch
 end

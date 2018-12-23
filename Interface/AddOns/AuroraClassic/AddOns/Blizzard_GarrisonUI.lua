@@ -145,8 +145,8 @@ C.themes["Blizzard_GarrisonUI"] = function()
 				local hl = button:GetHighlightTexture()
 				hl:SetColorTexture(r, g, b, .1)
 				hl:ClearAllPoints()
-				hl:SetPoint("TOPLEFT", button, "TOPLEFT", 1, -1)
-				hl:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -1, 1)
+				hl:SetPoint("TOPLEFT", button, C.mult, -C.mult)
+				hl:SetPoint("BOTTOMRIGHT", button, -C.mult, C.mult)
 
 				if portrait then
 					F.ReskinGarrisonPortrait(portrait)
@@ -215,6 +215,7 @@ C.themes["Blizzard_GarrisonUI"] = function()
 		F.StripTextures(self.CloseButton)
 		F.ReskinClose(self.CloseButton)
 		self.GarrCorners:Hide()
+		if self.OverlayElements then self.OverlayElements:SetAlpha(0) end
 		if self.ClassHallIcon then self.ClassHallIcon:Hide() end
 		if self.TitleScroll then
 			F.StripTextures(self.TitleScroll)
@@ -296,8 +297,8 @@ C.themes["Blizzard_GarrisonUI"] = function()
 		local hl = tab:GetHighlightTexture()
 		hl:SetColorTexture(r, g, b, .1)
 		hl:ClearAllPoints()
-		hl:SetPoint("TOPLEFT", bg, 1, -1)
-		hl:SetPoint("BOTTOMRIGHT", bg, -1, 1)
+		hl:SetPoint("TOPLEFT", bg, C.mult, -C.mult)
+		hl:SetPoint("BOTTOMRIGHT", bg, -C.mult, C.mult)
 	end
 
 	hooksecurefunc("GarrisonBuildingList_SelectTab", function(tab)
@@ -323,14 +324,12 @@ C.themes["Blizzard_GarrisonUI"] = function()
 
 				button.SelectedBG:SetColorTexture(r, g, b, .2)
 				button.SelectedBG:ClearAllPoints()
-				button.SelectedBG:SetPoint("TOPLEFT", bg, 1, -1)
-				button.SelectedBG:SetPoint("BOTTOMRIGHT", bg, -1, 1)
+				button.SelectedBG:SetPoint("TOPLEFT", bg, C.mult, -C.mult)
+				button.SelectedBG:SetPoint("BOTTOMRIGHT", bg, -C.mult, C.mult)
 
 				local hl = button:GetHighlightTexture()
 				hl:SetColorTexture(r, g, b, .1)
-				hl:ClearAllPoints()
-				hl:SetPoint("TOPLEFT", bg, 1, -1)
-				hl:SetPoint("BOTTOMRIGHT", bg, -1, 1)
+				hl:SetAllPoints(button.SelectedBG)
 
 				button.styled = true
 			end
@@ -430,7 +429,6 @@ C.themes["Blizzard_GarrisonUI"] = function()
 	-- Capacitive display
 
 	local CapacitiveDisplay = GarrisonCapacitiveDisplayFrame.CapacitiveDisplay
-
 	CapacitiveDisplay.IconBG:SetAlpha(0)
 
 	do
@@ -465,10 +463,7 @@ C.themes["Blizzard_GarrisonUI"] = function()
 
 	local GarrisonLandingPage = GarrisonLandingPage
 
-	for i = 1, 10 do
-		select(i, GarrisonLandingPage:GetRegions()):Hide()
-	end
-
+	F.StripTextures(GarrisonLandingPage)
 	F.CreateBD(GarrisonLandingPage)
 	F.CreateSD(GarrisonLandingPage)
 	F.ReskinClose(GarrisonLandingPage.CloseButton)
@@ -733,11 +728,6 @@ C.themes["Blizzard_GarrisonUI"] = function()
 	-- [[ Recruiter frame ]]
 
 	local GarrisonRecruiterFrame = GarrisonRecruiterFrame
-
-	for i = 18, 22 do
-		select(i, GarrisonRecruiterFrame:GetRegions()):Hide()
-	end
-
 	F.ReskinPortraitFrame(GarrisonRecruiterFrame, true)
 
 	-- Pick
