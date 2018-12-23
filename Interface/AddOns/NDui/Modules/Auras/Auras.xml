@@ -1,0 +1,8 @@
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="Buff.lua"/>
+	<Script file="Reminder.lua"/>
+	<Script file="Totems.lua"/>
+	<Script file="AuraWatch.lua"/>
+	<Script file="MonkStatue.lua"/>
+	<Include file="Lumos\Lumos.xml"/>
+</Ui>
