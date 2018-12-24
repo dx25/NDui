@@ -268,7 +268,7 @@ function UF:OnLogin()
 		oUF:SetActiveStyle("Party")
 		local scale = NDuiDB["UFs"]["HeightScale"]
 		local party = oUF:SpawnHeader("oUF_Party", nil, "solo,party",
-			"showPlayer", false,
+			"showPlayer", NDuiDB["UFs"]["PartyFrameShowPlayer"],
 			"showSolo", false,
 			"showParty", true,
 			"yoffset", -52,
