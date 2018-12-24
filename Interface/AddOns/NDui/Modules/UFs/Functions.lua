@@ -513,6 +513,14 @@ local function customFilter(element, unit, button, name, _, _, _, _, _, caster, 
 		else
 			return nameplateShowAll or (caster == "player" or caster == "pet" or caster == "vehicle")
 		end
+	elseif style == "party" then
+		local bloodlustList = {
+			[57723] = true, 
+			[57724] = true, 
+			[80354] = true, 
+			[264689] = true,
+		}
+		return not bloodlustList[spellID]
 	elseif (element.onlyShowPlayer and button.isPlayer) or (not element.onlyShowPlayer and name) then
 		return true
 	end
@@ -639,6 +647,7 @@ function UF:CreateDebuffs(self)
 		bu.initialAnchor = "TOPLEFT"
 		bu["growth-x"] = "RIGHT"
 		bu.showDebuffType = true
+		bu.CustomFilter = customFilter
 	end
 
 	local width = self:GetWidth()
