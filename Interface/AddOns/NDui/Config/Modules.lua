@@ -69,9 +69,9 @@ C.Infobar = {
 	GuildPos 		= {"TOPLEFT", UIParent, 15, -6},					-- 公会信息位置
 	Friends 		= false,												-- 好友模块
 	FriendsPos 		= {"TOPLEFT", UIParent, 105, -6},					-- 好友模块位置
-	System			= true,												-- 帧数/延迟
-	SystemPos		=  {"BOTTOM", UIParent, "BOTTOMRIGHT", -270, 6},			-- 帧数/延迟位置
-	Memory			= true,												-- 内存占用
+	System			= true,													-- 帧数/延迟
+	SystemPos		= {"BOTTOM", UIParent, "BOTTOMRIGHT", -270, 6},		-- 帧数/延迟位置
+	Memory			= true,													-- 内存占用
 	MemoryPos		= {"TOPLEFT", UIParent, 285, -6},					-- 内存占用位置
 	MaxAddOns		= 12,												-- 插件信息显示数量
 	Location		= false,												-- 区域信息
@@ -79,10 +79,13 @@ C.Infobar = {
 
 	Spec			= false,												-- 天赋专精
 	SpecPos			= {"BOTTOMRIGHT", UIParent, -310, 6},				-- 天赋专精位置
-	Durability		= true,												-- 耐久度
+	Durability		= true,													-- 耐久度
 	DurabilityPos	= {"BOTTOM", UIParent, "BOTTOMRIGHT", -230, 6},		-- 耐久度位置
 	Gold			= false,												-- 金币信息
 	GoldPos			= {"BOTTOM", UIParent, "BOTTOMRIGHT", -125, 6}, 	-- 金币信息位置
-	Time			= true,												-- 时间信息
-	TimePos			= {"BOTTOM", UIParent, "BOTTOMRIGHT", -15, 6},				-- 时间信息位置
+	Time			= true,													-- 时间信息
+	TimePos			= {"BOTTOM", UIParent, "BOTTOMRIGHT", -15, 6},		-- 时间信息位置
+
+	Fonts			= {STANDARD_TEXT_FONT, 13, "OUTLINE"},				-- 字体
+	AutoAnchor		= true,												-- 自动对齐
 }
