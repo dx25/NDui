@@ -167,8 +167,6 @@ local function Update(self, _, unit)
 
 	local rd = self.RaidDebuffs
 	rd.priority = invalidPrio
-	rd.filter = "HARMFUL"
-
 	local _name, _icon, _count, _debuffType, _duration, _expiration, _spellId
 	local debuffs = rd.Debuffs or {}
 	local isCharmed = UnitIsCharmed(unit)
@@ -176,10 +174,10 @@ local function Update(self, _, unit)
 	local prio
 
 	for i = 1, 40 do
-		local name, icon, count, debuffType, duration, expiration, _, _, _, spellId = UnitAura(unit, i, rd.filter)
+		local name, icon, count, debuffType, duration, expiration, _, _, _, spellId = UnitAura(unit, i, "HARMFUL")
 		if not name then break end
 
-		if rd.ShowDispellableDebuff and debuffType and (not isCharmed) and (not canAttack) then
+		if rd.ShowDispellableDebuff and debuffType and filter == "HARMFUL" and (not isCharmed) and (not canAttack) then
 			if rd.FilterDispellableDebuff then
 				prio = DispellFilter[debuffType] and (DispellPriority[debuffType] + 6) or 2
 				if prio == 2 then debuffType = nil end
@@ -188,7 +186,7 @@ local function Update(self, _, unit)
 			end
 
 			if prio and prio > rd.priority then
-				rd.priority, rd.index = prio, i
+				rd.priority, rd.index, rd.filter = prio, i, filter
 				_name, _icon, _count, _debuffType, _duration, _expiration, _spellId = name, icon, count, debuffType, duration, expiration, spellId
 			end
 		end
@@ -199,7 +197,7 @@ local function Update(self, _, unit)
 		end
 
 		if not RaidDebuffsIgnore[spellId] and instPrio and (instPrio == 6 or instPrio > rd.priority) then
-			rd.priority, rd.index = instPrio, i
+			rd.priority, rd.index, rd.filter = instPrio, i, filter
 			_name, _icon, _count, _debuffType, _duration, _expiration, _spellId = name, icon, count, debuffType, duration, expiration, spellId
 		end
 	end

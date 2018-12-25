@@ -65,27 +65,24 @@ C.Tooltips = {
 
 -- 信息条
 C.Infobar = {
-	Guild	 		= true,												-- 公会信息
+	Guild	 		= false,												-- 公会信息
 	GuildPos 		= {"TOPLEFT", UIParent, 15, -6},					-- 公会信息位置
-	Friends 		= true,												-- 好友模块
+	Friends 		= false,												-- 好友模块
 	FriendsPos 		= {"TOPLEFT", UIParent, 105, -6},					-- 好友模块位置
 	System			= true,												-- 帧数/延迟
-	SystemPos		= {"TOPLEFT", UIParent, 190, -6},					-- 帧数/延迟位置
+	SystemPos		=  {"BOTTOM", UIParent, "BOTTOMRIGHT", -270, 6},			-- 帧数/延迟位置
 	Memory			= true,												-- 内存占用
 	MemoryPos		= {"TOPLEFT", UIParent, 285, -6},					-- 内存占用位置
 	MaxAddOns		= 12,												-- 插件信息显示数量
-	Location		= true,												-- 区域信息
+	Location		= false,												-- 区域信息
 	LocationPos		= {"TOPLEFT", UIParent, 380, -6},					-- 区域信息位置
 
-	Spec			= true,												-- 天赋专精
+	Spec			= false,												-- 天赋专精
 	SpecPos			= {"BOTTOMRIGHT", UIParent, -310, 6},				-- 天赋专精位置
 	Durability		= true,												-- 耐久度
 	DurabilityPos	= {"BOTTOM", UIParent, "BOTTOMRIGHT", -230, 6},		-- 耐久度位置
-	Gold			= true,												-- 金币信息
+	Gold			= false,												-- 金币信息
 	GoldPos			= {"BOTTOM", UIParent, "BOTTOMRIGHT", -125, 6}, 	-- 金币信息位置
 	Time			= true,												-- 时间信息
-	TimePos			= {"BOTTOMRIGHT", UIParent, -15, 6},				-- 时间信息位置
-
-	Fonts			= {STANDARD_TEXT_FONT, 13, "OUTLINE"},				-- 字体
-	AutoAnchor		= true,												-- 自动对齐
+	TimePos			= {"BOTTOM", UIParent, "BOTTOMRIGHT", -15, 6},				-- 时间信息位置
 }

@@ -12,7 +12,7 @@ local _, C = unpack(ns)
 local barFader = {						-- 动作条显隐设置
 	fadeInAlpha = 1,					-- 显示时的透明度
 	fadeInDuration = .3,				-- 显示耗时
-	fadeOutAlpha = .1,					-- 渐隐后的透明度
+	fadeOutAlpha = .01,					-- 渐隐后的透明度
 	fadeOutDuration = .8,				-- 渐隐耗时
 	fadeOutDelay = .5,					-- 延迟渐隐
 }
@@ -32,17 +32,17 @@ C.bars = {
     },
     -- BAR3 主动作条两侧
     bar3 = {
-		size        	    = 32,		-- 动作条大小
+		size        	    = 34,		-- 动作条大小
 		fader				= nil,		-- 鼠标悬停显隐
     },
     -- BAR4 右边动作条1
     bar4 = {
-		size           		= 32,		-- 动作条大小
+		size           		= 34,		-- 动作条大小
 		fader				= barFader,	-- 鼠标悬停显隐
     },
     -- BAR5 右边动作条2
     bar5 = {
-		size				= 32,		-- 动作条大小
+		size				= 34,		-- 动作条大小
 		fader				= barFader, -- 鼠标悬停显隐
     },
     -- PETBAR 宠物动作条
@@ -52,7 +52,7 @@ C.bars = {
     },
     -- STANCE + POSSESSBAR 姿态条
     stancebar = {
-		size          		= 30,		-- 动作条大小
+		size          		= 34,		-- 动作条大小
 		fader				= nil,		-- 鼠标悬停显隐
     },
     -- EXTRABAR 额外动作条
