@@ -367,7 +367,7 @@ local optionList = {		-- type, key, value, name, horizon, doubleline
 		{1, "UFs", "RaidFrame", "|cff00cc4c"..L["UFs RaidFrame"]},
 		{1, "UFs", "SimpleMode", L["Simple RaidFrame"], true},
 		{1, "UFs", "PartyFrame", DB.MyColor..L["UFs PartyFrame"]},
-		{1, "UFs", "PartyFrameShowPlayer", DB.MyColor..L["UFs PartyFrame ShowPlayer"]，true},
+		{1, "UFs", "PartyFrameShowPlayer", DB.MyColor..L["UFs PartyFrame ShowPlayer"], true},
 		{},--blank
 		{1, "UFs", "ShowTeamIndex", L["RaidFrame TeamIndex"]},
 		{1, "UFs", "HealthPerc", L["Show HealthPerc"], true},
