@@ -32,7 +32,7 @@ C.UFs = {
 	Targetcb		= {"BOTTOM", UIParent, "BOTTOM", 0, 335},			-- 目标施法条默认位置
 	TargetcbSize	= {280, 20},										-- 目标施法条尺寸
 	Focuscb			= {"CENTER", UIParent, "CENTER", 0, 200},			-- 焦点施法条默认位置
-	FocuscbSize		= {320, 20},										-- 焦点施法条尺寸
+	FocuscbSize		= {320, 20},									-- 焦点施法条尺寸
 
 	PlayerPos		= {"TOPRIGHT", UIParent, "BOTTOM", -200, 300},		-- 玩家框体默认位置
 	TargetPos		= {"TOPLEFT", UIParent, "BOTTOM", 200, 300},		-- 目标框体默认位置
@@ -70,7 +70,7 @@ C.Infobar = {
 	Friends 		= false,												-- 好友模块
 	FriendsPos 		= {"TOPLEFT", UIParent, 105, -6},					-- 好友模块位置
 	System			= true,												-- 帧数/延迟
-	SystemPos		=  {"BOTTOM", UIParent, "BOTTOMRIGHT", -270, 6},					-- 帧数/延迟位置
+	SystemPos		=  {"BOTTOM", UIParent, "BOTTOMRIGHT", -270, 6},			-- 帧数/延迟位置
 	Memory			= true,												-- 内存占用
 	MemoryPos		= {"TOPLEFT", UIParent, 285, -6},					-- 内存占用位置
 	MaxAddOns		= 12,												-- 插件信息显示数量
