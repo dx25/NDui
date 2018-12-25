@@ -17,9 +17,9 @@ oUF.colors.power.ARCANE_CHARGES = {.41, .8, .94}
 
 -- Various values
 local function retVal(self, val1, val2, val3, val4)
-	if self.mystyle == "player" or self.mystyle == "target" then
+	if self.mystyle == "player" or self.mystyle == "target" or self.mystyle == "party" then
 		return val1
-	elseif self.mystyle == "focus" or self.mystyle == "party" then
+	elseif self.mystyle == "focus" then
 		return val2
 	else
 		if self.mystyle == "nameplate" and val4 then
@@ -605,10 +605,12 @@ function UF:CreateBuffs(self)
 	bu.num = 6
 	bu.spacing = 5
 	bu.iconsPerRow = 6
-	if self.mystyle == "party"  then
-		bu.onlyShowPlayer = true
-	else
+	
 	bu.onlyShowPlayer = false
+	if self.mystyle == "party"  then
+		bu.onlyShowPlayer = true	
+	end
+	
 	local width = self:GetWidth()
 	bu.size = auraIconSize(width, bu.iconsPerRow, bu.spacing)
 	bu:SetWidth(self:GetWidth())
