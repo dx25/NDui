@@ -19,7 +19,7 @@ oUF.colors.power.ARCANE_CHARGES = {.41, .8, .94}
 local function retVal(self, val1, val2, val3, val4)
 	if self.mystyle == "player" or self.mystyle == "target" then
 		return val1
-	elseif self.mystyle == "focus" then
+	elseif self.mystyle == "focus" or self.mystyle == "party" then
 		return val2
 	else
 		if self.mystyle == "nameplate" and val4 then
@@ -103,7 +103,7 @@ function UF:CreateHealthText(self)
 
 	if self.mystyle == "player" then
 		self:Tag(name, " [color][name]")
-	elseif self.mystyle == "target" then
+	elseif self.mystyle == "target" or self.mystyle == "party" then
 		self:Tag(name, "[fulllevel] [color][name][afkdnd]")
 	elseif self.mystyle == "focus" then
 		self:Tag(name, "[color][name][afkdnd]")
@@ -596,13 +596,16 @@ function UF:CreateBuffs(self)
 	bu.num = 6
 	bu.spacing = 5
 	bu.iconsPerRow = 6
+	if self.mystyle == "party"  then
+		bu.onlyShowPlayer = true
+	else
 	bu.onlyShowPlayer = false
 
 	local width = self:GetWidth()
 	bu.size = auraIconSize(width, bu.iconsPerRow, bu.spacing)
 	bu:SetWidth(self:GetWidth())
 	bu:SetHeight((bu.size + bu.spacing) * floor(bu.num/bu.iconsPerRow + .5))
-
+	
 	bu.showStealableBuffs = true
 	bu.PostCreateIcon = postCreateIcon
 	bu.PostUpdateIcon = postUpdateIcon
@@ -625,6 +628,16 @@ function UF:CreateDebuffs(self)
 		bu:SetPoint("TOPRIGHT", self, "TOPLEFT", -5, 0)
 		bu.num = 10
 		bu.iconsPerRow = 5
+		bu.CustomFilter = customFilter
+	elseif self.mystyle == "party" then
+		bu:SetPoint("TOPLEFT", self, "TOPRIGHT", 5, 0)
+		bu.num = 10
+		bu.line = 1
+		bu.iconsPerRow = 5
+		bu.size = self:GetHeight()+self.Power:GetHeight()
+		bu.initialAnchor = "TOPLEFT"
+		bu["growth-x"] = "RIGHT"
+		bu.showDebuffType = true
 		bu.CustomFilter = customFilter
 	end
 
