@@ -245,7 +245,7 @@ local function onMouseWheelCast(self)
 end
 
 local function setupClickSets(self)
-	if self.mystyle ~= "raid" then return end	-- just in case
+	if self.mystyle ~= "raid" and self.mystyle ~= "party" then return end	-- just in case
 	if InCombatLockdown() then return end
 
 	onMouseWheelCast(self)
