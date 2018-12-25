@@ -7,7 +7,7 @@ function module:OnLogin()
 
 	local FONT_SIZE = 20
 	local MIN_DURATION = 2.5                    -- the minimum duration to show cooldown text for
-	local MIN_SCALE = 0.005                       -- the minimum scale we want to show cooldown counts at, anything below this will be hidden
+	local MIN_SCALE = 0.005                     -- the minimum scale we want to show cooldown counts at, anything below this will be hidden
 	local ICON_SIZE = 36
 	local hideNumbers = {}
 	local pairs, floor, strfind = pairs, math.floor, string.find
