@@ -275,8 +275,8 @@ function UF:OnLogin()
 			"oUF-initialConfigFunction", ([[
 				self:SetWidth(%d)
 				self:SetHeight(%d)
-			]]):format(245, 25*scale))
-		B.Mover(party, L[""], "PartyUF", {"TOPLEFT", UIParent, 35, -50}, 245, (25*scale + 40) * 4)
+			]]):format(240, 24*scale))
+		B.Mover(party, L[""], "PartyUF", {"TOPLEFT", UIParent, 35, -50}, 240, (24*scale + 40) * 4)
 	end
 
 	if NDuiDB["UFs"]["RaidFrame"] then
