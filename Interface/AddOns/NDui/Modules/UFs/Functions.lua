@@ -97,6 +97,7 @@ function UF:CreateHealthText(self)
 		name:SetWidth(self:GetWidth()*.85)
 		name:ClearAllPoints()
 		name:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, 5)
+
 	else
 		name:SetWidth(self:GetWidth()*.55)
 	end
@@ -496,9 +497,9 @@ local function customFilter(element, unit, button, name, _, _, _, _, _, caster, 
 		end
 	elseif style == "raid" then
 		if NDuiDB["UFs"]["RaidBuffIndicator"] then
-			return C.RaidBuffs["ALL"][spellID] or NDuiADB["RaidAuraWatch"][spellID]
+			return not button.isDebuff and (C.RaidBuffs["ALL"][spellID] or NDuiADB["RaidAuraWatch"][spellID])
 		else
-			return button.isPlayer and C.RaidBuffs[DB.MyClass][spellID] or C.RaidBuffs["ALL"][spellID] or C.RaidBuffs["WARNING"][spellID]
+			return C.RaidBuffs[DB.MyClass][spellID] and button.isPlayer or C.RaidBuffs["ALL"][spellID]
 		end
 	elseif style == "nameplate" or style == "boss" or style == "arena" then
 		if UnitIsUnit("player", unit) then
@@ -608,12 +609,10 @@ function UF:CreateBuffs(self)
 		bu.onlyShowPlayer = true
 	else
 	bu.onlyShowPlayer = false
-
 	local width = self:GetWidth()
 	bu.size = auraIconSize(width, bu.iconsPerRow, bu.spacing)
 	bu:SetWidth(self:GetWidth())
 	bu:SetHeight((bu.size + bu.spacing) * floor(bu.num/bu.iconsPerRow + .5))
-	
 	bu.showStealableBuffs = true
 	bu.PostCreateIcon = postCreateIcon
 	bu.PostUpdateIcon = postUpdateIcon

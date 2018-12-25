@@ -278,7 +278,7 @@ function UF:OnLogin()
 			]]):format(245, 25*scale))
 		B.Mover(party, L[""], "PartyUF", {"TOPLEFT", UIParent, 35, -50}, 245, (25*scale + 40) * 4)
 	end
-	
+
 	if NDuiDB["UFs"]["RaidFrame"] then
 		-- Hide Default RaidFrame
 		local function HideRaid()

@@ -68,8 +68,9 @@ function module:ChantLumos(self)
 				UpdateBuff(button, 13877, 13877, true)
 			end
 		end
+
 		UpdateCooldown(self.bu[5], 1766, true)		
-	elseif GetSpecialization() == 3 then
+  elseif GetSpecialization() == 3 then
 		UpdateDebuff(self.bu[1], 195452, 195452)
 
 		do

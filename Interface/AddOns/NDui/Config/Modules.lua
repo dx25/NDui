@@ -85,7 +85,4 @@ C.Infobar = {
 	GoldPos			= {"BOTTOM", UIParent, "BOTTOMRIGHT", -125, 6}, 	-- 金币信息位置
 	Time			= true,												-- 时间信息
 	TimePos			= {"BOTTOM", UIParent, "BOTTOMRIGHT", -15, 6},				-- 时间信息位置
-
-	Fonts			= {STANDARD_TEXT_FONT, 13, "OUTLINE"},				-- 字体
-	AutoAnchor		= true,												-- 自动对齐
 }

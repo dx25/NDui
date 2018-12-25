@@ -73,7 +73,7 @@ function module:RareAlert()
 
 	local cache = {}
 	local function updateAlert(_, id)
-		local _, instType, _, _, _, _, _, instID = GetInstanceInfo()
+		local instID = select(8, GetInstanceInfo())
 		if isIgnored[instID] then return end
 
 		if id and not cache[id] then
@@ -89,9 +89,7 @@ function module:RareAlert()
 			if NDuiDB["Misc"]["AlertinChat"] then
 				print("  -> "..DB.InfoColor..L["Rare Found"]..tex..(info.name or ""))
 			end
-			if not NDuiDB["Misc"]["RareAlertInWild"] or instType == "none" then
-				PlaySoundFile("Sound\\Interface\\PVPFlagTakenMono.ogg", "master")
-			end
+			PlaySoundFile("Sound\\Interface\\PVPFlagTakenMono.ogg", "master")
 			cache[id] = true
 		end
 		if #cache > 666 then wipe(cache) end
