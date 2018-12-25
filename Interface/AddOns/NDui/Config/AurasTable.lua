@@ -9,12 +9,12 @@ local groups = {
 	["Target Aura"] = {"RIGHT", 5, "ICON", 36, C.Auras.TargetAuraPos},
 	["Special Aura"] = {"LEFT", 5, "ICON", 36, C.Auras.SpecialPos},
 	["Focus Aura"] = {"RIGHT", 5, "ICON", 35, C.Auras.FocusPos},
-	["Spell Cooldown"] = {"UP", 5, "BAR", 18, C.Auras.CDPos, 150},
+	["Spell Cooldown"] = {"DOWN", 5, "BAR", 18, C.Auras.CDPos, 150},
 	["Enchant Aura"] = {"LEFT", 5, "ICON", 36, C.Auras.EnchantPos},
 	["Raid Buff"] = {"LEFT", 5, "ICON", 42, C.Auras.RaidBuffPos},
 	["Raid Debuff"] = {"RIGHT", 5, "ICON", 42, C.Auras.RaidDebuffPos},
 	["Warning"] = {"RIGHT", 5, "ICON", 42, C.Auras.WarningPos},
-	["InternalCD"] = {"UP", 5, "BAR", 18, C.Auras.InternalPos, 150},
+	["InternalCD"] = {"DOWN", 5, "BAR", 18, C.Auras.InternalPos, 150},
 }
 
 -- AuraWatch
@@ -57,7 +57,7 @@ end
 local RaidBuffs = {}
 function module:AddClassSpells(list)
 	for class, value in pairs(list) do
-		if class == "ALL" or class == "WARNING" or class == DB.MyClass then
+		if class == "ALL" or class == DB.MyClass then
 			RaidBuffs[class] = value
 		end
 	end
@@ -115,7 +115,7 @@ function module:OnLogin()
 	local bloodlustList = {57723, 57724, 80354, 264689}
 	local function filterBloodlust()
 		for _, spellID in pairs(bloodlustList) do
-			C.RaidBuffs["WARNING"][spellID] = (DB.Role ~= "Healer")
+			C.RaidBuffs["ALL"][spellID] = (DB.Role ~= "Healer")
 		end
 	end
 	filterBloodlust()

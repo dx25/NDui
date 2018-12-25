@@ -78,6 +78,7 @@ local defaultSettings = {
 		Castbars = true,
 		SwingBar = false,
 		SwingTimer = false,
+		PartyFrame = true,
 		RaidFrame = true,
 		AutoRes = true,
 		NumGroups = 6,
@@ -221,7 +222,6 @@ local defaultSettings = {
 		ExplosiveCount = false,
 		ExplosiveCache = {},
 		PlacedItemAlert = false,
-		RareAlertInWild = false,
 	},
 	Tutorial = {
 		Complete = false,
@@ -365,6 +365,8 @@ local optionList = {		-- type, key, value, name, horizon, doubleline
 	[4] = {
 		{1, "UFs", "RaidFrame", "|cff00cc4c"..L["UFs RaidFrame"]},
 		{1, "UFs", "SimpleMode", L["Simple RaidFrame"], true},
+		{1, "UFs", "PartyFrame", DB.MyColor..L["UFs PartyFrame"]},
+		{1, "UFs", "PartyFrameShowPlayer", DB.MyColor..L["UFs PartyFrame ShowPlayer"]},
 		{},--blank
 		{1, "UFs", "ShowTeamIndex", L["RaidFrame TeamIndex"]},
 		{1, "UFs", "HealthPerc", L["Show HealthPerc"], true},
@@ -446,8 +448,7 @@ local optionList = {		-- type, key, value, name, horizon, doubleline
 		{1, "Misc", "PlacedItemAlert", L["Placed Item Alert"].."*", true},
 		{},--blank
 		{1, "Misc", "RareAlerter", "|cff00cc4c"..L["Rare Alert"]},
-		{1, "Misc", "AlertinChat", L["Alert In Chat"].."*"},
-		{1, "Misc", "RareAlertInWild", L["RareAlertInWild"].."*", true},
+		{1, "Misc", "AlertinChat", L["Alert In Chat"].."*", true},
 	},
 	[8] = {
 		{1, "Chat", "Lock", "|cff00cc4c"..L["Lock Chat"]},
@@ -864,6 +865,21 @@ function setupRaidDebuffs()
 	options[3] = module:CreateEditbox(frame, "ID*", 10, -90, L["ID Intro"])
 	options[4] = module:CreateEditbox(frame, L["Priority"], 120, -90, L["Priority Intro"])
 
+	raidDebuffsGUI:HookScript("OnShow", function()
+		local instName, instType = GetInstanceInfo()
+		if instType == "none" then return end
+		for i = 1, 2 do
+			local option = options[i]
+			for j = 1, #option.options do
+				local name = option.options[j].text
+				if instName == name then
+					iType.options[i]:Click()
+					options[i].options[j]:Click()
+				end
+			end
+		end
+	end)
+
 	local function analyzePrio(priority)
 		priority = priority or 2
 		priority = min(priority, 6)
@@ -994,23 +1010,6 @@ function setupRaidDebuffs()
 		end
 	end
 	updateBars("")
-
-	local function autoSelectInstance()
-		local instName, instType = GetInstanceInfo()
-		if instType == "none" then return end
-		for i = 1, 2 do
-			local option = options[i]
-			for j = 1, #option.options do
-				local name = option.options[j].text
-				if instName == name then
-					iType.options[i]:Click()
-					options[i].options[j]:Click()
-				end
-			end
-		end
-	end
-	autoSelectInstance()
-	raidDebuffsGUI:HookScript("OnShow", autoSelectInstance)
 end
 
 function setupClickCast()
