@@ -52,7 +52,7 @@ C.bars = {
     },
     -- STANCE + POSSESSBAR 姿态条
     stancebar = {
-		size          		= 30,		-- 动作条大小
+		size          		= 34,		-- 动作条大小
 		fader				= nil,		-- 鼠标悬停显隐
     },
     -- EXTRABAR 额外动作条

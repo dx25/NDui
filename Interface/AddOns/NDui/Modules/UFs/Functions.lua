@@ -17,9 +17,9 @@ oUF.colors.power.ARCANE_CHARGES = {.41, .8, .94}
 
 -- Various values
 local function retVal(self, val1, val2, val3, val4)
-	if self.mystyle == "player" or self.mystyle == "target" then
+	if self.mystyle == "player" or self.mystyle == "target" or self.mystyle == "party" then
 		return val1
-	elseif self.mystyle == "focus" or self.mystyle == "party" then
+	elseif self.mystyle == "focus" then
 		return val2
 	else
 		if self.mystyle == "nameplate" and val4 then
@@ -520,7 +520,11 @@ local function customFilter(element, unit, button, name, _, _, _, _, _, caster, 
 			[80354] = true, 
 			[264689] = true,
 		}
-		return not bloodlustList[spellID]
+		local deductedTime = {
+			[206151] = true
+		}	
+		return not bloodlustList[spellID] and not deductedTime[spellID]
+		
 	elseif (element.onlyShowPlayer and button.isPlayer) or (not element.onlyShowPlayer and name) then
 		return true
 	end
@@ -605,17 +609,17 @@ function UF:CreateBuffs(self)
 	bu.num = 6
 	bu.spacing = 5
 	bu.iconsPerRow = 6
+	
 	bu.onlyShowPlayer = false
+	if self.mystyle == "party"  then
+		bu.onlyShowPlayer = true	
+	end
+	
 	local width = self:GetWidth()
 	bu.size = auraIconSize(width, bu.iconsPerRow, bu.spacing)
 	bu:SetWidth(self:GetWidth())
 	bu:SetHeight((bu.size + bu.spacing) * floor(bu.num/bu.iconsPerRow + .5))
-	if self.mystyle == "party"  then
-		bu.showStealableBuffs = false
-		bu.onlyShowPlayer = true
-	else
-		bu.showStealableBuffs = true
-	end 
+	bu.showStealableBuffs = true
 	bu.PostCreateIcon = postCreateIcon
 	bu.PostUpdateIcon = postUpdateIcon
 

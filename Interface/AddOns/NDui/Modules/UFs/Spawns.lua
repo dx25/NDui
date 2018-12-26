@@ -261,22 +261,22 @@ function UF:OnLogin()
 				arena[i]:SetPoint("TOPLEFT", boss[i].mover)
 			end
 		end
-	end
-
-	if  NDuiDB["UFs"]["PartyFrame"] then
-		oUF:RegisterStyle("Party", CreatePartyStyle)
-		oUF:SetActiveStyle("Party")
-		local scale = NDuiDB["UFs"]["HeightScale"]
-		local party = oUF:SpawnHeader("oUF_Party", nil, "solo,party",
-			"showPlayer", NDuiDB["UFs"]["PartyFrameShowPlayer"],
-			"showSolo", false,
-			"showParty", true,
-			"yoffset", -52,
-			"oUF-initialConfigFunction", ([[
-				self:SetWidth(%d)
-				self:SetHeight(%d)
-			]]):format(245, 25*scale))
-		B.Mover(party, L[""], "PartyUF", {"TOPLEFT", UIParent, 35, -50}, 245, (25*scale + 40) * 4)
+		
+		if  NDuiDB["UFs"]["PartyFrame"] then
+			oUF:RegisterStyle("Party", CreatePartyStyle)
+			oUF:SetActiveStyle("Party")
+			local scale = NDuiDB["UFs"]["HeightScale"]
+			local party = oUF:SpawnHeader("oUF_Party", nil, "solo,party",
+				"showPlayer", NDuiDB["UFs"]["PartyFrameShowPlayer"],
+				"showSolo", false,
+				"showParty", true,
+				"yoffset", -52,
+				"oUF-initialConfigFunction", ([[
+					self:SetWidth(%d)
+					self:SetHeight(%d)
+				]]):format(240, 24*scale))
+			B.Mover(party, L[""], "PartyUF", {"TOPLEFT", UIParent, 35, -50}, 240, (24*scale + 40) * 4)
+		end
 	end
 
 	if NDuiDB["UFs"]["RaidFrame"] then
