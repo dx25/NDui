@@ -523,7 +523,7 @@ local function customFilter(element, unit, button, name, _, _, _, _, _, caster, 
 		local deductedTime = {
 			[206151] = true
 		}	
-		return not bloodlustList[spellID] and deductedTime[spellID]
+		return not bloodlustList[spellID] and not deductedTime[spellID]
 		
 	elseif (element.onlyShowPlayer and button.isPlayer) or (not element.onlyShowPlayer and name) then
 		return true
