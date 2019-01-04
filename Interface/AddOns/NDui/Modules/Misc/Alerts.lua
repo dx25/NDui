@@ -89,7 +89,10 @@ function module:RareAlert()
 			if NDuiDB["Misc"]["AlertinChat"] then
 				print("  -> "..DB.InfoColor..L["Rare Found"]..tex..(info.name or ""))
 			end
-			PlaySoundFile("Sound\\Interface\\PVPFlagTakenMono.ogg", "master")
+			if not NDuiDB["Misc"]["RareAlertInWild"] or instType == "none" then
+				--PlaySoundFile("Sound\\Interface\\PVPFlagTakenMono.ogg", "master")
+				PlaySound(23404, "master")
+			end
 			cache[id] = true
 		end
 		if #cache > 666 then wipe(cache) end
@@ -119,8 +122,8 @@ function module:InterruptAlert()
 		["SPELL_INTERRUPT"] = L["Interrupt"],
 		["SPELL_STOLEN"] = L["Steal"],
 		["SPELL_DISPEL"] = L["Dispel"],
+		["SPELL_AURA_BROKEN_SPELL"] = L["BrokenSpell"],
 	}
-	if NDuiDB["Misc"]["BrokenSpell"] then infoType["SPELL_AURA_BROKEN_SPELL"] = L["BrokenSpell"] end
 
 	local blackList = {
 		[99] = true,		-- 夺魂咆哮
@@ -155,6 +158,7 @@ function module:InterruptAlert()
 			local infoText = infoType[eventType]
 			if infoText then
 				if infoText == L["BrokenSpell"] then
+					if not NDuiDB["Misc"]["BrokenSpell"] then return end
 					if auraType and auraType == AURA_TYPE_BUFF or blackList[spellID] then return end	-- need reviewed
 					SendChatMessage(format(infoText, sourceName..GetSpellLink(extraskillID), destName..GetSpellLink(spellID)), msgChannel())
 				else

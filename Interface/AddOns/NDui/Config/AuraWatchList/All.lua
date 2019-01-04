@@ -88,6 +88,7 @@ local list = {
 		{AuraID = 271105, UnitID = "player"},	-- 屠夫之眼
 		{AuraID = 271107, UnitID = "player"},	-- 金色光泽
 		{AuraID = 277181, UnitID = "player"},	-- 胜利的味道
+		{AuraID = 278231, UnitID = "player"},	-- 森林之王的愤怒
 		{AuraID = 274430, UnitID = "player", Text = L["Haste"]},	-- 永不间断的时钟，急速
 		{AuraID = 274431, UnitID = "player", Text = L["Mastery"]},	-- 精通
 		{AuraID = 267325, UnitID = "player", Text = L["Mastery"]},	-- 注铅骰子，精通
@@ -206,6 +207,7 @@ local list = {
 		{AuraID = 273563, UnitID = "player"},	-- 神经毒素，神庙
 		{AuraID = 257407, UnitID = "player"},	-- 追踪，阿塔达萨
 		{AuraID = 250585, UnitID = "player", Flash = true},	-- 剧毒之池，阿塔达萨
+		{AuraID = 258723, UnitID = "player", Flash = true},	-- 怪诞之池，阿塔达萨
 		{AuraID = 258058, UnitID = "player"},	-- 挤压，托尔达戈
 		{AuraID = 260067, UnitID = "player"},	-- 恶毒槌击，托尔达戈
 		{AuraID = 273226, UnitID = "player"},	-- 腐烂孢子，孢林
