@@ -313,7 +313,7 @@ function module:CreateRM()
 		end
 		GameTooltip:Show()
 	end)
-	checker:HookScript("OnLeave", GameTooltip_Hide)
+	checker:HookScript("OnLeave", B.HideTooltip)
 
 	local reset = true
 	checker:HookScript("OnMouseDown", function(_, btn)
@@ -458,6 +458,10 @@ function module:CreateRM()
 		if btn == "RightButton" and (IsPartyLFG() and IsLFGComplete() or not IsInInstance()) then
 			LeaveParty()
 		end
+	end)
+	header:HookScript("OnShow", function(self)
+		self:GetScript("OnLeave")(self)
+		self:GetScript("OnMouseUp")(self)
 	end)
 
 	-- Easymarking

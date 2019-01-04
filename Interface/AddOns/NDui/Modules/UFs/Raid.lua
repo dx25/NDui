@@ -26,6 +26,11 @@ function UF:CreateRaidIcons(self)
 	role:SetSize(12, 12)
 	role:SetPoint("TOPLEFT", 12, 8)
 	self.RaidRoleIndicator = role
+
+	local summon = parent:CreateTexture(nil, "OVERLAY")
+	summon:SetSize(32, 32)
+	summon:SetPoint("BOTTOM", 0, 1)
+	self.SummonIndicator = summon
 end
 
 local function UpdateTargetBorder(self)
@@ -89,6 +94,14 @@ function B:UpdateRaidDebuffs()
 	end
 end
 
+local function buttonOnEnter(self)
+	if not self.index then return end
+	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
+	GameTooltip:ClearLines()
+	GameTooltip:SetUnitAura(self.__owner.unit, self.index, self.filter)
+	GameTooltip:Show()
+end
+
 function UF:CreateRaidDebuffs(self)
 	local size = 18*NDuiDB["UFs"]["RaidScale"]
 
@@ -108,14 +121,8 @@ function UF:CreateRaidDebuffs(self)
 	bu.glowFrame:SetSize(size+8, size+8)
 
 	if not NDuiDB["UFs"]["AurasClickThrough"] then
-		bu:SetScript("OnEnter", function(self)
-			if not self.index then return end
-			GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
-			GameTooltip:ClearLines()
-			GameTooltip:SetUnitAura(self.__owner.unit, self.index, self.filter)
-			GameTooltip:Show()
-		end)
-		bu:SetScript("OnLeave", GameTooltip_Hide)
+		bu:SetScript("OnEnter", buttonOnEnter)
+		bu:SetScript("OnLeave", B.HideTooltip)
 	end
 
 	bu.ShowDispellableDebuff = true
