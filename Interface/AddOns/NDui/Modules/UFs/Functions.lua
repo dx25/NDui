@@ -55,7 +55,7 @@ end
 function UF:CreateHealthBar(self)
 	local health = CreateFrame("StatusBar", nil, self)
 	health:SetAllPoints()
-	health:SetStatusBarTexture(DB.normTex)
+	health:SetStatusBarTexture(DB.emptyTex)
 	health:SetStatusBarColor(.1, .1, .1)
 	health:SetFrameLevel(self:GetFrameLevel() - 2)
 	B.CreateSD(health, 3, 3)
@@ -63,7 +63,7 @@ function UF:CreateHealthBar(self)
 
 	local bg = health:CreateTexture(nil, "BACKGROUND")
 	bg:SetAllPoints()
-	bg:SetTexture(DB.bdTex)
+	bg:SetTexture(DB.emptyTex)
 	bg:SetVertexColor(.6, .6, .6)
 	bg.multiplier = .25
 
@@ -229,7 +229,7 @@ function UF:CreateIcons(self)
 
 	local ri = self:CreateTexture(nil, "OVERLAY")
 	if self.mystyle == "raid" then
-		ri:SetPoint("TOPRIGHT", self, 5, 5)
+		ri:SetPoint("TOPRIGHT", self, 8, 0)
 	else
 		ri:SetPoint("TOPRIGHT", self, 0, 8)
 	end
@@ -681,8 +681,8 @@ function UF:CreateDebuffs(self)
 		bu:SetPoint("TOPLEFT", self, "TOPRIGHT", 5, 0)
 		bu.num = 10
 		bu.line = 1
-		bu.iconsPerRow = 5
-		bu.size = self:GetHeight()+self.Power:GetHeight()
+		bu.iconsPerRow = 8
+		bu.size = self:GetHeight()
 		bu.initialAnchor = "TOPLEFT"
 		bu["growth-x"] = "RIGHT"
 		bu.showDebuffType = true
@@ -692,7 +692,7 @@ function UF:CreateDebuffs(self)
 	local width = self:GetWidth()
 	bu.size = auraIconSize(width, bu.iconsPerRow, bu.spacing)
 	bu:SetWidth(self:GetWidth())
-	bu:SetHeight((bu.size + bu.spacing) * floor(bu.num/bu.iconsPerRow + .5))
+	bu:SetHeight((bu.size) * floor(bu.num/bu.iconsPerRow + .5))
 
 	bu.PostCreateIcon = postCreateIcon
 	bu.PostUpdateIcon = postUpdateIcon
@@ -867,31 +867,36 @@ function UF:CreatePrediction(self)
 	ohpb:SetTexture(DB.normTex)
 	ohpb:SetVertexColor(0, 1, 0, .5)
 
-	local abb = self:CreateTexture(nil, "BORDER", nil, 5)
-	abb:SetWidth(1)
-	abb:SetTexture(DB.normTex)
-	abb:SetVertexColor(.66, 1, 1, .7)
+	local lhb = self:CreateTexture(nil, "ARTWORK", nil, 1)
+	lhb:SetAllPoints()
+	lhb:SetColorTexture(DB.r, DB.g, DB.b)
+	lhb.tileSize = 32
 
-	local abbo = self:CreateTexture(nil, "ARTWORK", nil, 1)
-	abbo:SetAllPoints(abb)
-	abbo:SetTexture("Interface\\RaidFrame\\Shield-Overlay", true, true)
-	abbo.tileSize = 32
+	-- local abb = self:CreateTexture(nil, "BORDER", nil, 5)
+	-- abb:SetWidth(1)
+	-- abb:SetTexture(DB.normTex)
+	-- abb:SetVertexColor(.66, 1, 1, .7)
 
-	local oag = self:CreateTexture(nil, "ARTWORK", nil, 1)
-	oag:SetWidth(15)
-	oag:SetTexture("Interface\\RaidFrame\\Shield-Overshield")
-	oag:SetBlendMode("ADD")
-	oag:SetPoint("TOPLEFT", self.Health, "TOPRIGHT", -5, 2)
-	oag:SetPoint("BOTTOMLEFT", self.Health, "BOTTOMRIGHT", -5, -2)
+	-- local abbo = self:CreateTexture(nil, "ARTWORK", nil, 1)
+	-- abbo:SetAllPoints(abb)
+	-- abbo:SetTexture("Interface\\RaidFrame\\Shield-Overlay", true, true)
+	-- abbo.tileSize = 32
 
-	local hab = CreateFrame("StatusBar", nil, self)
-	hab:SetPoint("TOP")
-	hab:SetPoint("BOTTOM")
-	hab:SetPoint("RIGHT", self.Health:GetStatusBarTexture())
-	hab:SetWidth(self.Health:GetWidth())
-	hab:SetReverseFill(true)
-	hab:SetStatusBarTexture(DB.normTex)
-	hab:SetStatusBarColor(0, .5, .8, .5)
+	-- local oag = self:CreateTexture(nil, "ARTWORK", nil, 1)
+	-- oag:SetWidth(15)
+	-- oag:SetTexture("Interface\\RaidFrame\\Shield-Overshield")
+	-- oag:SetBlendMode("ADD")
+	-- oag:SetPoint("TOPLEFT", self.Health, "TOPRIGHT", -5, 2)
+	-- oag:SetPoint("BOTTOMLEFT", self.Health, "BOTTOMRIGHT", -5, -2)
+
+	-- local hab = CreateFrame("StatusBar", nil, self)
+	-- hab:SetPoint("TOP")
+	-- hab:SetPoint("BOTTOM")
+	-- hab:SetPoint("RIGHT", self.Health:GetStatusBarTexture())
+	-- hab:SetWidth(self.Health:GetWidth())
+	-- hab:SetReverseFill(true)
+	-- hab:SetStatusBarTexture(DB.normTex)
+	-- hab:SetStatusBarColor(0, .5, .8, .5)
 
 	local ohg = self:CreateTexture(nil, "ARTWORK", nil, 1)
 	ohg:SetWidth(15)
@@ -903,12 +908,13 @@ function UF:CreatePrediction(self)
 	self.HealPredictionAndAbsorb = {
 		myBar = mhpb,
 		otherBar = ohpb,
-		absorbBar = abb,
-		absorbBarOverlay = abbo,
-		overAbsorbGlow = oag,
-		healAbsorbBar = hab,
+		-- absorbBar = abb,
+		-- absorbBarOverlay = abbo,
+		--overAbsorbGlow = oag,
+		--healAbsorbBar = hab,
 		overHealAbsorbGlow = ohg,
 		maxOverflow = 1,
+		loseHealthBar = lhb
 	}
 end
 

@@ -1,4 +1,5 @@
 local _, ns = ...
+local B, C, L, DB = unpack(ns)
 local oUF = ns.oUF or oUF
 
 local function UpdateFillBar(frame, previousTexture, bar, amount)
@@ -37,6 +38,7 @@ local function Update(self, event, unit)
 	local absorb = UnitGetTotalAbsorbs(unit) or 0
 	local healAbsorb = UnitGetTotalHealAbsorbs(unit) or 0
 	local health, maxHealth = UnitHealth(unit), UnitHealthMax(unit)
+	local loseHealth = maxHealth - health
 
 	local overHealAbsorb = false
 	if(health < healAbsorb) then
@@ -80,6 +82,8 @@ local function Update(self, event, unit)
 
 	previousTexture = UpdateFillBar(self, previousTexture, hp.myBar, myIncomingHeal)
 	previousTexture = UpdateFillBar(self, previousTexture, hp.otherBar, allIncomingHeal)
+	previousTexture = UpdateFillBar(self, previousTexture, hp.loseHealthBar, loseHealth)
+	hp.loseHealthBar:SetColorTexture(B.UnitColor(unit))
 	if hp.absorbBar then
 		previousTexture = UpdateFillBar(self, previousTexture, hp.absorbBar, absorb)
 	end
@@ -134,6 +138,9 @@ local function Enable(self)
 		end
 		if(hp.otherBar and hp.otherBar:IsObjectType'Texture' and not hp.otherBar:GetTexture()) then
 			hp.otherBar:SetTexture([[Interface\TargetingFrame\UI-StatusBar]])
+		end
+		if(hp.loseHealthBar and hp.loseHealthBar:IsObjectType'Texture' and not hp.loseHealthBar:GetTexture()) then
+			hp.loseHealthBar:SetTexture([[Interface\TargetingFrame\UI-StatusBar]])
 		end
 		if(hp.absorbBar and hp.absorbBar:IsObjectType'Texture' and not hp.absorbBar:GetTexture()) then
 			hp.absorbBar:SetTexture([[Interface\TargetingFrame\UI-Texture]])
