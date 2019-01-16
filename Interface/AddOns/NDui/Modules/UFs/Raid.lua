@@ -29,7 +29,8 @@ function UF:CreateRaidIcons(self)
 
 	local summon = parent:CreateTexture(nil, "OVERLAY")
 	summon:SetSize(32, 32)
-	summon:SetPoint("CENTER")
+	summon:SetPoint("CENTER", parent)
+	summon:SetParent(UIParent)
 	self.SummonIndicator = summon
 end
 
@@ -359,6 +360,7 @@ local function updateBuffIndicator(self, event, unit)
 end
 
 function UF:CreateBuffIndicator(self)
+	if NDuiDB["UFs"]["SimpleMode"] then return end
 	if not NDuiDB["UFs"]["RaidBuffIndicator"] then return end
 
 	local anchors = {"TOPLEFT", "TOP", "TOPRIGHT", "LEFT", "RIGHT", "BOTTOMLEFT", "BOTTOM", "BOTTOMRIGHT"}

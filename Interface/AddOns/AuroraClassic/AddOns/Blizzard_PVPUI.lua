@@ -59,7 +59,6 @@ C.themes["Blizzard_PVPUI"] = function()
 
 	PVPQueueFrame.CategoryButton1.Background:Show()
 	F.StripTextures(PVPQueueFrame.HonorInset)
-	F.RemoveSlice(PVPQueueFrame.HonorInset)
 
 	local popup = PVPQueueFrame.NewSeasonPopup
 	F.Reskin(popup.Leave)
@@ -157,14 +156,12 @@ C.themes["Blizzard_PVPUI"] = function()
 	ConquestFrame.ShadowOverlay:Hide()
 
 	if AuroraConfig.tooltips then
-		F.CreateBD(ConquestTooltip)
-		F.CreateSD(ConquestTooltip)
+		F.ReskinTooltip(ConquestTooltip)
 	end
 
-	local ConquestFrameButton_OnEnter = function(self)
+	local function ConquestFrameButton_OnEnter(self)
 		ConquestTooltip:SetPoint("TOPLEFT", self, "TOPRIGHT", 1, 0)
 	end
-
 	ConquestFrame.Arena2v2:HookScript("OnEnter", ConquestFrameButton_OnEnter)
 	ConquestFrame.Arena3v3:HookScript("OnEnter", ConquestFrameButton_OnEnter)
 	ConquestFrame.RatedBG:HookScript("OnEnter", ConquestFrameButton_OnEnter)

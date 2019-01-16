@@ -1,20 +1,10 @@
 local F, C = unpack(select(2, ...))
 
 C.themes["Blizzard_OrderHallUI"] = function()
-	-- Orderhall tooltips
-	if AuroraConfig.tooltips then
-		GarrisonFollowerAbilityWithoutCountersTooltip:DisableDrawLayer("BACKGROUND")
-		F.CreateBDFrame(GarrisonFollowerAbilityWithoutCountersTooltip)
-		F.CreateSD(GarrisonFollowerAbilityWithoutCountersTooltip)
-		GarrisonFollowerMissionAbilityWithoutCountersTooltip:DisableDrawLayer("BACKGROUND")
-		F.CreateBDFrame(GarrisonFollowerMissionAbilityWithoutCountersTooltip)
-		F.CreateSD(GarrisonFollowerMissionAbilityWithoutCountersTooltip)
-	end
-
 	-- Talent Frame
 	local OrderHallTalentFrame = OrderHallTalentFrame
 
-	F.ReskinPortraitFrame(OrderHallTalentFrame, true)
+	F.ReskinPortraitFrame(OrderHallTalentFrame)
 	OrderHallTalentFrame.Background:SetAlpha(0)
 	F.Reskin(OrderHallTalentFrame.BackButton)
 	F.ReskinIcon(OrderHallTalentFrame.Currency.Icon)
