@@ -39,6 +39,9 @@ local defaultSettings = {
 		Cooldown = true,
 		DecimalCD = true,
 		Style = 1,
+		Bar1Fade = false,
+		Bar2Fade = false,
+		Bar3Fade = false,
 		Bar4Fade = false,
 		Bar5Fade = true,
 		Scale = 1,
@@ -316,6 +319,9 @@ local optionList = {		-- type, key, value, name, horizon, doubleline
 	[1] = {
 		{1, "Actionbar", "Enable", "|cff00cc4c"..L["Enable Actionbar"]},
 		{},--blank
+		{1, "Actionbar", "Bar1Fade", L["Bar1 Fade"]},
+		{1, "Actionbar", "Bar2Fade", L["Bar2 Fade"], true},
+		{1, "Actionbar", "Bar3Fade", L["Bar3 Fade"]},
 		{1, "Actionbar", "Bar4Fade", L["Bar4 Fade"]},
 		{1, "Actionbar", "Bar5Fade", L["Bar5 Fade"], true},
 		{4, "Actionbar", "Style", L["Actionbar Style"], false, {L["BarStyle1"], L["BarStyle2"], L["BarStyle3"], L["BarStyle4"], L["BarStyle5"]}},
