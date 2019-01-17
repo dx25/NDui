@@ -23,17 +23,17 @@ C.bars = {
 	-- BAR1 主动作条（下）
 	bar1 = {
 		size				= 34,		-- 动作条大小
-		fader				= nil,		-- 鼠标悬停显隐
+		fader				= barFader,		-- 鼠标悬停显隐
     },
     -- BAR2 主动作条（上）
     bar2 = {
 		size           		= 34,		-- 动作条大小
-		fader				= nil,		-- 鼠标悬停显隐
+		fader				= barFader,		-- 鼠标悬停显隐
     },
     -- BAR3 主动作条两侧
     bar3 = {
 		size        	    = 34,		-- 动作条大小
-		fader				= nil,		-- 鼠标悬停显隐
+		fader				= barFader,		-- 鼠标悬停显隐
     },
     -- BAR4 右边动作条1
     bar4 = {
