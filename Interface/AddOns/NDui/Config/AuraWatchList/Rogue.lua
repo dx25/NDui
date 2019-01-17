@@ -56,12 +56,7 @@ local list = {
 		{AuraID = 185422, UnitID = "player"},	-- 影舞
 		{AuraID = 212283, UnitID = "player"},	-- 死亡标记
 		{AuraID = 202754, UnitID = "player"},	-- 隐秘刀刃
-		{AuraID = 193356, UnitID = "player"},	-- 强势连击
-		{AuraID = 193357, UnitID = "player"},	-- 暗鲨涌动
-		{AuraID = 193358, UnitID = "player"},	-- 大乱斗
 		{AuraID = 193359, UnitID = "player"},	-- 双巧手
-		{AuraID = 199603, UnitID = "player"},	-- 骷髅黑帆
-		{AuraID = 199600, UnitID = "player"},	-- 埋藏的宝藏
 		{AuraID = 202665, UnitID = "player"},	-- 恐惧之刃诅咒
 		{AuraID = 199754, UnitID = "player"},	-- 还击
 		{AuraID = 195627, UnitID = "player"},	-- 可乘之机
