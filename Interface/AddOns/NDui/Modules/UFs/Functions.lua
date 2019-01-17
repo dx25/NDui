@@ -537,36 +537,15 @@ end
 
 local function customFilterForpartyBuffs(element, unit, button, name, _, _, _, _, _, caster, isStealable, _, spellID, _, _, _, nameplateShowAll)
 	local style = element.__owner.mystyle
-	local aurasBuffs = {
-		[21562] = true
-	}
-	if style == "party" then
-		if caster ~= "player" then
-			return false
-		elseif aurasBuffs[spellID] then
-			return false 
-		else
-			return checkBuffPermanent(spellID)
+	if name and spellID == 209859 then
+		element.bolster = element.bolster + 1
+		if not element.bolsterIndex then
+			element.bolsterIndex = button
+			return true
 		end
-    else
-        return true
-    end
-end
-
-function checkBuffPermanent(spellID)
-    local i = 1
-    if spellID == nil then
-        return true
-    end
-    for i = 1, 32 do
-        local name, _, _, _, duration, expirationTime, _, _, _, buffSpellId = UnitBuff("player", i, "PLAYER")
-        if name ~= nil and duration ~= nil and expirationTime ~= nil and buffSpellId ~= nil then
-            if buffSpellId == spellID and duration == 0 and expirationTime == 0 then
-				return false
-            end
-        end
-    end
-    return true
+	elseif style == "party" then
+		return C.RaidBuffs[DB.MyClass][spellID] and button.isPlayer or C.RaidBuffs["ALL"][spellID]
+	end
 end
 
 local function auraIconSize(w, n, s)
