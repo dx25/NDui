@@ -107,9 +107,9 @@ function UF:CreateHealthText(self)
 		name:SetWidth(self:GetWidth()*.55)
 	end
 
-	if self.mystyle == "player" then
+	if self.mystyle == "player" or self.mystyle == "party" then
 		self:Tag(name, " [color][name]")
-	elseif self.mystyle == "target" or self.mystyle == "party" then
+	elseif self.mystyle == "target" then
 		self:Tag(name, "[fulllevel] [color][name][afkdnd]")
 	elseif self.mystyle == "focus" then
 		self:Tag(name, "[color][name][afkdnd]")
