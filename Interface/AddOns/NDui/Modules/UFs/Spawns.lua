@@ -269,12 +269,12 @@ function UF:OnLogin()
 				"showPlayer", NDuiDB["UFs"]["PartyFrameShowPlayer"],
 				"showSolo", false,
 				"showParty", true,
-				"yoffset", -52,
+				"yoffset", -35,
 				"oUF-initialConfigFunction", ([[
 					self:SetWidth(%d)
 					self:SetHeight(%d)
-				]]):format(240, 24*scale))
-			B.Mover(party, L[""], "PartyUF", {"TOPLEFT", UIParent, 35, -50}, 240, (24*scale + 40) * 4)
+				]]):format(150, 22*scale))
+			B.Mover(party, L[""], "PartyUF", {"TOPLEFT", UIParent, 35, -50},150, (22*scale + 35) * 5)
 		end
 	end
 
