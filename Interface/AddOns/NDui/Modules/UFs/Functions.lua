@@ -663,9 +663,9 @@ function UF:CreateDebuffs(self)
 		bu.CustomFilter = customFilter
 	elseif self.mystyle == "party" then
 		bu:SetPoint("TOPLEFT", self, "TOPRIGHT", 5, 0)
-		bu.num = 10
+		bu.num = 4
 		bu.line = 1
-		bu.iconsPerRow = 5
+		bu.iconsPerRow = 4
 		bu.size = self:GetHeight()+self.Power:GetHeight()
 		bu.initialAnchor = "TOPLEFT"
 		bu["growth-x"] = "RIGHT"
