@@ -7,6 +7,7 @@ local pairs, ipairs, next = pairs, ipairs, next
 local min, max, tinsert = math.min, math.max, table.insert
 local cr, cg, cb = DB.r, DB.g, DB.b
 local guiTab, guiPage, f = {}, {}
+local ACF = IsAddOnLoaded("AuroraClassic") and unpack(AuroraClassic)
 
 -- Extra setup
 local setupRaidDebuffs, setupClickCast, setupBuffIndicator, setupPlateAura
@@ -105,7 +106,7 @@ local defaultSettings = {
 		ShowTeamIndex = false,
 		HeightScale = 1,
 		ClassPower = true,
-		QuakeTimer = false,
+		QuakeTimer = true,
 		LagString = true,
 		RuneTimer = true,
 		RaidBuffIndicator = true,
@@ -186,6 +187,7 @@ local defaultSettings = {
 		MenuLine = true,
 		ClassLine = true,
 		Details = true,
+		PGFSkin = true,
 	},
 	Tooltip = {
 		CombatHide = false,
@@ -510,6 +512,7 @@ local optionList = {		-- type, key, value, name, horizon, doubleline
 		{1, "Skins", "TMW", L["TMW Skin"], true},
 		{1, "Skins", "WeakAuras", L["WeakAuras Skin"]},
 		{1, "Skins", "Details", L["Details Skin"], true},
+		{1, "Skins", "PGFSkin", L["PGF Skin"]},
 	},
 	[11] = {
 		{1, "Tooltip", "CombatHide", L["Hide Tooltip"].."*"},
@@ -1471,10 +1474,8 @@ local function OpenGUI()
 		guiPage[i].child = CreateFrame("Frame", nil, guiPage[i])
 		guiPage[i].child:SetSize(610, 1)
 		guiPage[i]:SetScrollChild(guiPage[i].child)
-		if IsAddOnLoaded("AuroraClassic") then
-			local F = unpack(AuroraClassic)
-			F.ReskinScroll(guiPage[i].ScrollBar)
-		end
+		-- AuroraClassic
+		if ACF then ACF.ReskinScroll(guiPage[i].ScrollBar) end
 
 		CreateOption(i)
 	end
@@ -1560,4 +1561,7 @@ function module:OnLogin()
 		local F = unpack(AuroraClassic)
 		F.Reskin(gui)
 	end
+	-- AuroraClassic
+	if ACF then ACF.Reskin(gui) end
 end
+

@@ -488,5 +488,5 @@ L["PlayerPlate IconSize"] = "职业监控图标大小"
 L["PartyFrame"] = "小队框体"
 L["UFs PartyFrame"] = "启用小队框体"
 L["UFs PartyFrame ShowPlayer"] = "小队显示自己"
-
-
+L["No move"] = "别动"
+L["PGF Skin"] = "启用PremadeGroupsFilter皮肤"
