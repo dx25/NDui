@@ -1,5 +1,5 @@
 local _, ns = ...
-local B, C, L, DB = unpack(ns)
+local B, C, L, DB, F = unpack(ns)
 local module = B:RegisterModule("GUI")
 
 local format, tonumber, type = string.format, tonumber, type
@@ -7,7 +7,6 @@ local pairs, ipairs, next = pairs, ipairs, next
 local min, max, tinsert = math.min, math.max, table.insert
 local cr, cg, cb = DB.r, DB.g, DB.b
 local guiTab, guiPage, f = {}, {}
-local ACF = IsAddOnLoaded("AuroraClassic") and unpack(AuroraClassic)
 
 -- Extra setup
 local setupRaidDebuffs, setupClickCast, setupBuffIndicator, setupPlateAura
@@ -21,6 +20,12 @@ local function setupAuraWatch()
 	f:Hide()
 	SlashCmdList["NDUI_AWCONFIG"]()
 end
+
+local textureList = {
+	[1] = DB.normTex,
+	[2] = DB.gradTex,
+	[3] = DB.flatTex,
+}
 
 -- Default Settings
 local defaultSettings = {
@@ -264,6 +269,7 @@ local accountSettings = {
 	BWRequest = false,
 	RaidAuraWatch = {},
 	CornerBuffs = {},
+	TexStyle = 2,
 }
 
 local function InitialSettings(source, target)
@@ -296,6 +302,7 @@ loader:SetScript("OnEvent", function(self, _, addon)
 
 	InitialSettings(defaultSettings, NDuiDB)
 	InitialSettings(accountSettings, NDuiADB)
+	DB.normTex = textureList[NDuiADB["TexStyle"]]
 
 	self:UnregisterAllEvents()
 end)
@@ -556,6 +563,8 @@ local optionList = {		-- type, key, value, name, horizon, doubleline
 		{},--blank
 		{3, "ACCOUNT", "GUIScale", L["GUI Scale"].."*", false, {.5, 1.5, 1}, setupGUIScale},
 		{4, "ACCOUNT", "NumberFormat", L["Numberize"], true, {L["Number Type1"], L["Number Type2"], L["Number Type3"]}},
+		{},--blank
+		{4, "ACCOUNT", "TexStyle", L["Texture Style"], false, {L["Highlight"], L["Gradient"], L["Flat"]}},
 	},
 }
 
@@ -1475,7 +1484,7 @@ local function OpenGUI()
 		guiPage[i].child:SetSize(610, 1)
 		guiPage[i]:SetScrollChild(guiPage[i].child)
 		-- AuroraClassic
-		if ACF then ACF.ReskinScroll(guiPage[i].ScrollBar) end
+		if F then F.ReskinScroll(guiPage[i].ScrollBar) end
 
 		CreateOption(i)
 	end
@@ -1556,12 +1565,6 @@ function module:OnLogin()
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
 	end)
 
-	-- Aurora Reskin
-	if IsAddOnLoaded("AuroraClassic") then
-		local F = unpack(AuroraClassic)
-		F.Reskin(gui)
-	end
 	-- AuroraClassic
-	if ACF then ACF.Reskin(gui) end
+	if F then F.Reskin(gui) end
 end
-
