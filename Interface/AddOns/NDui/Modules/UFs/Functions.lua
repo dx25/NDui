@@ -17,7 +17,7 @@ oUF.colors.power.ARCANE_CHARGES = {.41, .8, .94}
 
 -- Various values
 local function retVal(self, val1, val2, val3, val4)
-	if self.mystyle == "player" or self.mystyle == "target" then
+	if self.mystyle == "player" or self.mystyle == "target" or self.mystyle == "party" then
 		return val1
 	elseif self.mystyle == "focus" then
 		return val2
@@ -102,11 +102,12 @@ function UF:CreateHealthText(self)
 		name:SetWidth(self:GetWidth()*.85)
 		name:ClearAllPoints()
 		name:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, 5)
+
 	else
 		name:SetWidth(self:GetWidth()*.55)
 	end
 
-	if self.mystyle == "player" then
+	if self.mystyle == "player" or self.mystyle == "party" then
 		self:Tag(name, " [color][name]")
 	elseif self.mystyle == "target" then
 		self:Tag(name, "[fulllevel] [color][name][afkdnd]")
@@ -501,9 +502,9 @@ local function customFilter(element, unit, button, name, _, _, _, _, _, caster, 
 		end
 	elseif style == "raid" then
 		if NDuiDB["UFs"]["RaidBuffIndicator"] then
-			return C.RaidBuffs["ALL"][spellID] or NDuiADB["RaidAuraWatch"][spellID]
+			return not button.isDebuff and (C.RaidBuffs["ALL"][spellID] or NDuiADB["RaidAuraWatch"][spellID])
 		else
-			return button.isPlayer and C.RaidBuffs[DB.MyClass][spellID] or C.RaidBuffs["ALL"][spellID] or C.RaidBuffs["WARNING"][spellID]
+			return C.RaidBuffs[DB.MyClass][spellID] and button.isPlayer or C.RaidBuffs["ALL"][spellID]
 		end
 	elseif style == "nameplate" or style == "boss" or style == "arena" then
 		if UnitIsUnit("player", unit) then
@@ -517,8 +518,33 @@ local function customFilter(element, unit, button, name, _, _, _, _, _, caster, 
 		else
 			return nameplateShowAll or (caster == "player" or caster == "pet" or caster == "vehicle")
 		end
+	elseif style == "party" then
+		local bloodlustList = {
+			[57723] = true, 
+			[57724] = true, 
+			[80354] = true, 
+			[264689] = true,
+		}
+		local deductedTime = {
+			[206151] = true
+		}	
+		return not bloodlustList[spellID] and not deductedTime[spellID]
+		
 	elseif (element.onlyShowPlayer and button.isPlayer) or (not element.onlyShowPlayer and name) then
 		return true
+	end
+end
+
+local function customFilterForpartyBuffs(element, unit, button, name, _, _, _, _, _, caster, isStealable, _, spellID, _, _, _, nameplateShowAll)
+	local style = element.__owner.mystyle
+	if name and spellID == 209859 then
+		element.bolster = element.bolster + 1
+		if not element.bolsterIndex then
+			element.bolsterIndex = button
+			return true
+		end
+	elseif style == "party" then
+		return C.RaidBuffs[DB.MyClass][spellID] and button.isPlayer or C.RaidBuffs["ALL"][spellID]
 	end
 end
 
@@ -602,13 +628,16 @@ function UF:CreateBuffs(self)
 	bu.num = 6
 	bu.spacing = 5
 	bu.iconsPerRow = 6
+	
 	bu.onlyShowPlayer = false
-
+	if self.mystyle == "party"  then
+		bu.CustomFilter = customFilterForpartyBuffs	
+	end
+	
 	local width = self:GetWidth()
 	bu.size = auraIconSize(width, bu.iconsPerRow, bu.spacing)
 	bu:SetWidth(self:GetWidth())
 	bu:SetHeight((bu.size + bu.spacing) * floor(bu.num/bu.iconsPerRow + .5))
-
 	bu.showStealableBuffs = true
 	bu.PostCreateIcon = postCreateIcon
 	bu.PostUpdateIcon = postUpdateIcon
@@ -631,6 +660,16 @@ function UF:CreateDebuffs(self)
 		bu:SetPoint("TOPRIGHT", self, "TOPLEFT", -5, 0)
 		bu.num = 10
 		bu.iconsPerRow = 5
+		bu.CustomFilter = customFilter
+	elseif self.mystyle == "party" then
+		bu:SetPoint("TOPLEFT", self, "TOPRIGHT", 5, 0)
+		bu.num = 4
+		bu.line = 1
+		bu.iconsPerRow = 4
+		bu.size = self:GetHeight()+self.Power:GetHeight()
+		bu.initialAnchor = "TOPLEFT"
+		bu["growth-x"] = "RIGHT"
+		bu.showDebuffType = true
 		bu.CustomFilter = customFilter
 	end
 

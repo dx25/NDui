@@ -45,6 +45,9 @@ local defaultSettings = {
 		Cooldown = true,
 		DecimalCD = true,
 		Style = 1,
+		Bar1Fade = false,
+		Bar2Fade = false,
+		Bar3Fade = false,
 		Bar4Fade = false,
 		Bar5Fade = true,
 		Scale = 1,
@@ -85,7 +88,9 @@ local defaultSettings = {
 		Castbars = true,
 		SwingBar = false,
 		SwingTimer = false,
+		PartyFrame = true,
 		RaidFrame = true,
+		PartyFrame = true,
 		AutoRes = true,
 		NumGroups = 6,
 		SimpleMode = false,
@@ -323,6 +328,9 @@ local optionList = {		-- type, key, value, name, horizon, doubleline
 	[1] = {
 		{1, "Actionbar", "Enable", "|cff00cc4c"..L["Enable Actionbar"]},
 		{},--blank
+		{1, "Actionbar", "Bar1Fade", L["Bar1 Fade"]},
+		{1, "Actionbar", "Bar2Fade", L["Bar2 Fade"], true},
+		{1, "Actionbar", "Bar3Fade", L["Bar3 Fade"]},
 		{1, "Actionbar", "Bar4Fade", L["Bar4 Fade"]},
 		{1, "Actionbar", "Bar5Fade", L["Bar5 Fade"], true},
 		{4, "Actionbar", "Style", L["Actionbar Style"], false, {L["BarStyle1"], L["BarStyle2"], L["BarStyle3"], L["BarStyle4"], L["BarStyle5"]}},
@@ -378,6 +386,8 @@ local optionList = {		-- type, key, value, name, horizon, doubleline
 	[4] = {
 		{1, "UFs", "RaidFrame", "|cff00cc4c"..L["UFs RaidFrame"]},
 		{1, "UFs", "SimpleMode", L["Simple RaidFrame"], true},
+		{1, "UFs", "PartyFrame", DB.MyColor..L["UFs PartyFrame"]},
+		{1, "UFs", "PartyFrameShowPlayer", DB.MyColor..L["UFs PartyFrame ShowPlayer"], true},
 		{},--blank
 		{1, "UFs", "ShowTeamIndex", L["RaidFrame TeamIndex"]},
 		{1, "UFs", "HealthPerc", L["Show HealthPerc"], true},
@@ -460,8 +470,7 @@ local optionList = {		-- type, key, value, name, horizon, doubleline
 		{1, "Misc", "PlacedItemAlert", L["Placed Item Alert"].."*", true},
 		{},--blank
 		{1, "Misc", "RareAlerter", "|cff00cc4c"..L["Rare Alert"]},
-		{1, "Misc", "AlertinChat", L["Alert In Chat"].."*"},
-		{1, "Misc", "RareAlertInWild", L["RareAlertInWild"].."*", true},
+		{1, "Misc", "AlertinChat", L["Alert In Chat"].."*", true},
 	},
 	[8] = {
 		{1, "Chat", "Lock", "|cff00cc4c"..L["Lock Chat"]},
@@ -874,6 +883,21 @@ function setupRaidDebuffs()
 
 	options[3] = module:CreateEditbox(frame, "ID*", 10, -90, L["ID Intro"])
 	options[4] = module:CreateEditbox(frame, L["Priority"], 120, -90, L["Priority Intro"])
+
+	raidDebuffsGUI:HookScript("OnShow", function()
+		local instName, instType = GetInstanceInfo()
+		if instType == "none" then return end
+		for i = 1, 2 do
+			local option = options[i]
+			for j = 1, #option.options do
+				local name = option.options[j].text
+				if instName == name then
+					iType.options[i]:Click()
+					options[i].options[j]:Click()
+				end
+			end
+		end
+	end)
 
 	local function analyzePrio(priority)
 		priority = priority or 2

@@ -252,7 +252,7 @@ local function onMouseWheelCast(self)
 end
 
 local function setupClickSets(self)
-	if self.mystyle ~= "raid" then return end	-- just in case
+	if self.mystyle ~= "raid" and self.mystyle ~= "party" then return end	-- just in case
 	if InCombatLockdown() then return end
 
 	onMouseWheelCast(self)
@@ -375,7 +375,7 @@ function UF:CreateBuffIndicator(self)
 		icon.count:ClearAllPoints()
 		if NDuiDB["UFs"]["BuffTimerIndicator"] then
 			local point, anchorPoint, x, y = unpack(counterOffsets[anchor][2])
-			icon.timer = B.CreateFS(icon, 12, "", false, "CENTER", -x, 0)
+			icon.timer = B.CreateFS(icon, 15, "", false, "CENTER", -x, 0)
 			icon.count:SetPoint(point, icon.timer, anchorPoint, x, y)
 		else
 			icon.bg = icon:CreateTexture(nil, "BACKGROUND")

@@ -1,0 +1,23 @@
+{
+	"search": 0,
+	"searchList": [
+		{
+			"name": "NDui",
+			"other": true
+		}
+	],
+	"ipMap": [
+		"!BaudErrorFrame",
+		"AuroraClassic",
+		"Skada",
+		{
+			"type": "interface",
+			"path": [
+				"TargetingFrame",
+				"Tooltips"
+			]
+		}
+	],
+	"version": "3.16.1",
+	"mapping": "NDui"
+}

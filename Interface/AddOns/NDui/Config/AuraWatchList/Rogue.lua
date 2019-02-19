@@ -62,6 +62,7 @@ local list = {
 		{AuraID = 193359, UnitID = "player", Text = L["CD"]},	-- 双巧手，骰子
 		{AuraID = 199603, UnitID = "player", Text = L["Strike"]},	-- 骷髅黑帆，骰子
 		{AuraID = 199600, UnitID = "player", Text = L["Power"]},	-- 埋藏的宝藏，骰子
+		{AuraID = 193359, UnitID = "player"},	-- 双巧手
 		{AuraID = 202665, UnitID = "player"},	-- 恐惧之刃诅咒
 		{AuraID = 199754, UnitID = "player"},	-- 还击
 		{AuraID = 195627, UnitID = "player"},	-- 可乘之机

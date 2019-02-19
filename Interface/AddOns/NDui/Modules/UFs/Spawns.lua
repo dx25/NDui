@@ -136,6 +136,28 @@ local function CreateArenaStyle(self)
 	UF:CreateFactionIcon(self)
 end
 
+local function CreatePartyStyle(self)
+	self.mystyle = "party"
+	self.Range = {
+		insideAlpha = 1, outsideAlpha = .35,
+	}
+
+	UF:CreateHeader(self)
+	UF:CreateHealthBar(self)
+	UF:CreateHealthText(self)
+	UF:CreatePowerBar(self)
+	UF:CreatePortrait(self)
+	UF:CreateRaidMark(self)
+	UF:CreateIcons(self)
+	UF:CreateTargetBorder(self)
+	UF:CreateRaidIcons(self)
+	UF:CreatePrediction(self)
+	UF:CreateClickSets(self)
+	UF:CreateDebuffs(self)
+	UF:CreateBuffs(self)
+	UF:CreateThreatBorder(self)
+end
+
 local function CreateRaidStyle(self)
 	self.mystyle = "raid"
 	self.Range = {
@@ -238,6 +260,22 @@ function UF:OnLogin()
 				arena[i]:SetPoint("TOPLEFT", boss[i].mover)
 			end
 		end
+		
+		if  NDuiDB["UFs"]["PartyFrame"] then
+			oUF:RegisterStyle("Party", CreatePartyStyle)
+			oUF:SetActiveStyle("Party")
+			local scale = NDuiDB["UFs"]["HeightScale"]
+			local party = oUF:SpawnHeader("oUF_Party", nil, "solo,party",
+				"showPlayer", NDuiDB["UFs"]["PartyFrameShowPlayer"],
+				"showSolo", false,
+				"showParty", true,
+				"yoffset", -35,
+				"oUF-initialConfigFunction", ([[
+					self:SetWidth(%d)
+					self:SetHeight(%d)
+				]]):format(150, 22*scale))
+			B.Mover(party, L[""], "PartyUF", {"TOPLEFT", UIParent, 35, -50},150, (22*scale + 35) * 5)
+		end
 	end
 
 	if NDuiDB["UFs"]["RaidFrame"] then
@@ -271,7 +309,7 @@ function UF:OnLogin()
 				local group = oUF:SpawnHeader(name, nil, "solo,party,raid",
 				"showPlayer", true,
 				"showSolo", false,
-				"showParty", true,
+				"showParty", not NDuiDB["UFs"]["PartyFrame"],
 				"showRaid", true,
 				"xoffset", 5,
 				"yOffset", -10,
@@ -311,7 +349,7 @@ function UF:OnLogin()
 				local group = oUF:SpawnHeader(name, nil, "solo,party,raid",
 				"showPlayer", true,
 				"showSolo", false,
-				"showParty", true,
+				"showParty", not NDuiDB["UFs"]["PartyFrame"],
 				"showRaid", true,
 				"xoffset", 5,
 				"yOffset", -10,

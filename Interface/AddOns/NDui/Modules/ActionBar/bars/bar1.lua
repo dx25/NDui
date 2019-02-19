@@ -46,7 +46,7 @@ function module:OnLogin()
 	end
 
 	--create the mouseover functionality
-	if cfg.fader then
+	if NDuiDB["Actionbar"]["Bar1Fade"] and cfg.fader then
 		B.CreateButtonFrameFader(frame, buttonList, cfg.fader)
 	end
 
